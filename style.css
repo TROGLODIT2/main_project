@@ -9,7 +9,8 @@ body *  {
 body {
     display: flex;
     flex-direction: column;
-}
+    justify-content: space-between;
+    height: 100vh;
 
 .search {
     width: 34%;
@@ -23,7 +24,6 @@ body {
 
 header {
     display: flex;
-    flex-direction: row;
     gap: 21px;
     align-items: center;
     height: 57px;
@@ -42,8 +42,8 @@ main {
     padding-top: 23px;
     padding-left: 42px;
     padding-right: 42px;
-    min-height: 100vh;
     background-color: aqua;
+    height: 100%;
 }
 
 footer {
