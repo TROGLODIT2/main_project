@@ -1,1 +1,69 @@
+body *  {
+    outline: 1px dotted blueviolet;
+    outline-offset: -1px;
+    margin: 0;
+    padding: 0;
+    font-family: Roboto;
+}
 
+.search {
+    width: 34%;
+    height: 24px;
+    border-radius: 5px;
+    background-color: #F5F5F5; 
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 8px;
+}
+
+header {
+    display: flex;
+    gap: 21px;
+    align-items: center;
+    height: 57px;
+    padding-left: 42px;
+    padding-right: 42px;
+
+}
+
+.logo_button {
+    display: flex;
+    gap: 13px;
+}
+
+main {
+    padding-top: 23px;
+    padding-left: 42px;
+    padding-right: 42px;
+}
+
+footer {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 42px;
+    padding-right: 42px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.for_creators {
+    display: flex;
+    justify-content: space-between;
+    gap: 60px;
+    
+}
+
+.section_creators {
+    display: flex;
+    flex-direction: column;
+}
+
+.section_creators h3 {
+    margin-bottom: 5px;
+}
+
+.mini_logo {
+    display: flex;
+    gap: 5px;
+}
