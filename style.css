@@ -46,6 +46,13 @@ main {
     height: 100%;
 }
 
+.game {
+    width: 131px;
+    height: 131px;
+    background-color: #fafafa;
+    border-radius: 10px;
+}
+
 footer {
     padding-top: 15px;
     padding-bottom: 15px;
