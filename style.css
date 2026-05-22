@@ -53,6 +53,13 @@ main {
     height: 100%;
 }
 
+.games_list {
+    display: flex;
+    justify-content: flex-start;
+    gap: 30px;
+    margin-top: 15px;
+}
+
 /*.game {
     width: 131px;
     height: 131px;
