@@ -20,6 +20,10 @@ h3 {
     font-weight: 300;
 }
 
+a {
+    text-decoration: none;
+}
+
 .search {
     width: 34%;
     height: 24px;
