@@ -81,6 +81,28 @@ main {
     border-radius: 10px;
 }
 
+.categories {
+    padding-top: 23px;
+}
+
+.categories_background {
+    height: 30px;
+    margin-top: 15px;
+    border-radius: 15px;
+    padding: 5px;
+    background-image: linear-gradient(45deg, #591abd, #b507b8, #f50c7d);
+}
+
+.buttons_categories {
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    height: 100%;
+    background-color: #ffffffdf;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 footer {
     padding-top: 15px;
     padding-bottom: 15px;
