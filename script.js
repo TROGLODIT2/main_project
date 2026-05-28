@@ -5,5 +5,5 @@ let links_list = ['src/picture/fridayNight.PNG', 'src/picture/geometryDashUFO2D.
 for (let i = 0; i < links_list.length; i ++) {
     links_divs[i].style.backgroundImage = `url(${links_list[i]})`;
     links_divs[i].style.backgroundRepeat = 'no-repeat';
+    links_divs[i].style.backgroundSize = 'cover';
 }
-console.log('картинки загружены');
