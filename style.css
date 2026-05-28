@@ -76,7 +76,7 @@ main {
     padding-top: 23px;
     padding-left: 42px;
     padding-right: 42px;
-    height: 100%;
+    flex-grow: 1;
 }
 
 .games_list {
