@@ -208,3 +208,33 @@ footer {
     grid-column: 1 / 2;
     grid-row: 2 / 3;
 }
+
+
+.nav_chess {
+    margin-top: 15px;
+    display: flex;
+
+}
+
+.nav_chess_button {
+    border: none;
+    background-color: white;
+    padding-left: 15px;
+    padding-right: 15px;
+    height: 30px;
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.nav_play {
+    border-right: 1px solid rgb(201, 201, 201);
+    border-left: 1px solid rgb(201, 201, 201);
+}
+
+.nav_tasks {
+    border-right: 1px solid rgb(201, 201, 201);
+}
+
+.nav_news {
+    border-right: 1px solid rgb(201, 201, 201);
+}
