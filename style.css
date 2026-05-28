@@ -1,6 +1,6 @@
 body *  {
-    outline: 1px dotted blueviolet;
-    outline-offset: -1px;
+    /* outline: 1px dotted blueviolet;
+    outline-offset: -1px; */
     margin: 0;
     padding: 0;
     font-family: Roboto;
@@ -170,46 +170,6 @@ footer {
     gap: 5px;
 }
 
-.shashki_menu {
-    max-width: 597px;
-    max-height: 514px;
-    display: grid;
-    grid-template-columns: 34.5% 34.5% 31%;
-    grid-template-rows: 206px 206px 102px;
-    background-image: url('src/picture/shashki_background_menu.png');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-
-}
-
-.shashki_menu_item {
-    width: 206px;
-    height: 206px;
-    font-size: 3em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
-
-.shashki_menu_item:nth-child(1) {
-    grid-column: 1 / 2;
-    grid-row: 1 / 2;
-}
-
-.shashki_menu_item:nth-child(2) {
-    grid-column: 2 / 3;
-    grid-row: 1 / 2;
-}
-
-.shashki_menu_item:nth-child(3) {
-    grid-column: 1 / 2;
-    grid-row: 2 / 3;
-}
-
-
 .nav_chess {
     margin-top: 15px;
     display: flex;
@@ -237,4 +197,41 @@ footer {
 
 .nav_news {
     border-right: 1px solid rgb(201, 201, 201);
+}
+
+.shashki_menu_item {
+    width: 206px;
+    height: 206px;
+    font-size: 3em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shashki_menu {
+    max-width: 597px;
+    max-height: 514px;
+    display: grid;
+    grid-template-columns: 34.5% 34.5% 31%;
+    grid-template-rows: 206px 206px 102px;
+    background-image: url('src/picture/shashki_background_menu.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+
+}
+
+.shashki_menu_item:nth-child(1) {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+}
+
+.shashki_menu_item:nth-child(2) {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+}
+
+.shashki_menu_item:nth-child(3) {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
 }
