@@ -51,7 +51,6 @@ for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 8; j += 2) {
         let checker = document.createElement('div');
         checker.classList.add('checker_white');
-        checker.classList.add(`${i}`);
         cells[init_position + i*8 + j].appendChild(checker);
     }
     if (cell_init_mode == 1) {
@@ -71,7 +70,6 @@ for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 8; j += 2) {
         let checker = document.createElement('div');
         checker.classList.add('checker_black');
-        checker.classList.add(`${i}`);
         cells[init_position + i*8 + j].appendChild(checker);
     }
     if (cell_init_mode == 1) {
@@ -81,4 +79,28 @@ for (let i = 0; i < 3; i++) {
         init_position += 1;
         cell_init_mode = 1;
     }
+}
+
+// Ходы. 1 - белые, 2 - черные
+let turn = 1;
+
+chosen_checker = '';
+let parent_cell = '';
+
+// Добавление события выбора белой шашки (недоделано)
+let white_checkers = document.querySelectorAll('.checker_white')
+for (let i = 0; i < white_checkers.length; i++) {
+    white_checkers[i].addEventListener('click', function () {
+        if (turn == 1) {
+            if (chosen_checker.parentElement != null) {
+                parent_cell = chosen_checker.parentElement;
+                parent_cell.style.backgroundColor = 'rgb(185, 118, 56)';
+            }
+            chosen_checker = white_checkers[i];
+            parent_cell = chosen_checker.parentElement;
+            parent_cell.style.backgroundColor = '#5cb334';
+            // Добавить айди клеткам и записать в переменную айди
+            // выбранной клетки
+        }
+    })
 }
