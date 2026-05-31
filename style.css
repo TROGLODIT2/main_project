@@ -98,7 +98,6 @@ main {
     height: 160px;
     background-image: linear-gradient(45deg, #b2bad6, #dce2fa);
     border-radius: 10px;
-    perspective: 10px;
     outline: 2px solid #dce2fa;
     background-position: center;
 }
