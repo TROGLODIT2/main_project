@@ -73,7 +73,7 @@ for (let i = 0; i < 3; i++) {
 }
 
 // Ходы. 1 - белые, 2 - черные
-let turn = 2;
+let turn = 1;
 
 // Поля вокруг выбранной клетки
 let chosen_checker = '';
@@ -331,7 +331,7 @@ for (let i = 0; i < white_checkers.length; i++) {
         if (turn == 1) {
             if (chosen_checker.parentElement != null) {
                 parent_cell = chosen_checker.parentElement;
-                parent_cell.style.backgroundColor = 'rgb(185, 118, 56)';
+                parent_cell.style.backgroundColor = '';
             }
             chosen_checker = white_checkers[i];
             parent_cell = chosen_checker.parentElement;
@@ -349,13 +349,93 @@ for (let i = 0; i < black_checkers.length; i++) {
         if (turn == 2) {
             if (chosen_checker.parentElement != null) {
                 parent_cell = chosen_checker.parentElement;
-                parent_cell.style.backgroundColor = 'rgb(185, 118, 56)';
+                parent_cell.style.backgroundColor = '';
             }
             chosen_checker = black_checkers[i];
             parent_cell = chosen_checker.parentElement;
             parent_cell.style.backgroundColor = '#5cb334';
             parent_id = parent_cell.getAttribute('id'); // id клетки родителя
             add_move_cells(parent_id, 2);
+        }
+    })
+}
+
+// Выбор клетки для хода
+for (let i = 0; i < cells.length; i++) {
+    cells[i].addEventListener('click', function () {
+        if (cells[i].classList.contains('move_cell') == true) {
+            // Удаление ходящей шашки
+            chosen_checker.remove();
+            // Добавление новой шашки на месте хода
+            let new_checker = document.createElement('div');
+
+            // Добавление класса новой шашке и удаление взятой шашки
+            if (turn==1) {
+                new_checker.classList.add('checker_white');
+                turn = 2;
+                if (+parent_id == +cells[i].getAttribute('id') + 18) {
+                    cells[+cells[i].getAttribute('id') + 8].querySelector('.checker_black').remove();
+                }
+                if (+parent_id == +cells[i].getAttribute('id') + 14) {
+                    cells[+cells[i].getAttribute('id') + 6].querySelector('.checker_black').remove();
+                }
+                if (+parent_id == +cells[i].getAttribute('id') - 18) {
+                    cells[+cells[i].getAttribute('id') - 10].querySelector('.checker_black').remove();
+                }
+                if (+parent_id == +cells[i].getAttribute('id') - 14) {
+                    cells[+cells[i].getAttribute('id') - 8].querySelector('.checker_black').remove();
+                }
+            } else {
+                new_checker.classList.add('checker_black');
+                turn = 1;
+                if (+parent_id == +cells[i].getAttribute('id') + 18) {
+                    cells[+cells[i].getAttribute('id') + 8].querySelector('.checker_white').remove();
+                }
+                if (+parent_id == +cells[i].getAttribute('id') + 14) {
+                    cells[+cells[i].getAttribute('id') + 6].querySelector('.checker_white').remove();
+                }
+                if (+parent_id == +cells[i].getAttribute('id') - 18) {
+                    cells[+cells[i].getAttribute('id') - 10].querySelector('.checker_white').remove();
+                }
+                if (+parent_id == +cells[i].getAttribute('id') - 14) {
+                    cells[+cells[i].getAttribute('id') - 8].querySelector('.checker_white').remove();
+                }
+            }
+            cells[i].appendChild(new_checker);
+            
+            
+
+            // Добавление события выбора новой шашки
+            new_checker.addEventListener('click', function () {
+                if (turn == 1 && new_checker.classList.contains('checker_white') == true) {
+                    if (chosen_checker.parentElement != null) {
+                        parent_cell = chosen_checker.parentElement;
+                        parent_cell.style.backgroundColor = '';
+                    }
+                    chosen_checker = new_checker;
+                    parent_cell = chosen_checker.parentElement;
+                    parent_cell.style.backgroundColor = '#5cb334';
+                    parent_id = parent_cell.getAttribute('id'); // id клетки родителя
+                    add_move_cells(parent_id, 1);
+                } else if (turn == 2 && new_checker.classList.contains('checker_black') == true) {
+                    if (chosen_checker.parentElement != null) {
+                        parent_cell = chosen_checker.parentElement;
+                        parent_cell.style.backgroundColor = '';
+                    }
+                    chosen_checker = new_checker;
+                    parent_cell = chosen_checker.parentElement;
+                    parent_cell.style.backgroundColor = '#5cb334';
+                    parent_id = parent_cell.getAttribute('id'); // id клетки родителя
+                    add_move_cells(parent_id, 2);
+                }
+            })
+
+            // Удаление ходов шашки
+            move_cells = document.querySelectorAll('.move_cell');
+            for (let i = 0; i < move_cells.length; i++) {
+                move_cells[i].classList.remove('move_cell');
+            }
+            parent_cell.style.backgroundColor = '';
         }
     })
 }
