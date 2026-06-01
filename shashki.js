@@ -80,15 +80,21 @@ let chosen_checker = '';
 let parent_cell = '';
 let parent_id = '';
 let move_cells = '';
-// 1 - не нужно брать, нужно брать
+
+// 1 - не нужно брать, 2 - нужно брать
 let need_capture = 1;
 let remaining_checkers = '';
+let need_capture_again = 1;
+let created_checker = '';
+// 1 - нельзя идти, 2 - можно идти
+let can_move = 1;
 
 let upper_left_cell = '';
 let upper_right_cell = '';
 let lower_left_cell = '';
 let lower_right_cell = '';
 
+// Проверка необходимости взятия своими шашками
 function check_need_capture(cell_color) {
     if (cell_color == 1) {
         remaining_checkers = document.querySelectorAll('.checker_white');
@@ -104,7 +110,7 @@ function check_need_capture(cell_color) {
             if (upper_left_cell != null && upper_left_cell.querySelector('.checker_black') != null) {
                 // Проверка на клетку 2 вертикали
                 if ((parent_id_check - 2) % 8 != 0 && parent_id_check - 18 > 0) {
-                    if (document.getElementById(parent_id_check - 18).querySelector('.checker_black') == null) {
+                    if (document.getElementById(parent_id_check - 18).querySelector('.checker_black') == null && document.getElementById(parent_id_check - 18).querySelector('.checker_white') == null) {
                         need_capture = 2;
                     }
                 }
@@ -112,7 +118,7 @@ function check_need_capture(cell_color) {
             if (upper_right_cell != null && upper_right_cell.querySelector('.checker_black') != null) {
                 // Проверка на клетку 7 вертикали
                 if ((parent_id_check + 1) % 8 != 0 && parent_id_check - 14 > 0) {
-                    if (document.getElementById(parent_id_check - 14).querySelector('.checker_black') == null) {
+                    if (document.getElementById(parent_id_check - 14).querySelector('.checker_black') == null && document.getElementById(parent_id_check - 14).querySelector('.checker_white') == null) {
                         need_capture = 2;
                     }
                 }
@@ -120,7 +126,7 @@ function check_need_capture(cell_color) {
             if (lower_left_cell != null && lower_left_cell.querySelector('.checker_black') != null) {
                 // Проверка на клетку 2 вертикали
                 if ((parent_id_check - 2) % 8 != 0 && parent_id_check + 14 < 65) {
-                    if (document.getElementById(parent_id_check + 14).querySelector('.checker_black') == null) {
+                    if (document.getElementById(parent_id_check + 14).querySelector('.checker_black') == null && document.getElementById(parent_id_check + 14).querySelector('.checker_white') == null) {
                         need_capture = 2;
                     }
                 }
@@ -128,7 +134,7 @@ function check_need_capture(cell_color) {
             if (lower_right_cell != null && lower_right_cell.querySelector('.checker_black') != null) {
                 // Проверка на клетку 7 вертикали
                 if ((parent_id_check + 1) % 8 != 0 && parent_id_check + 18 < 65) {
-                    if (document.getElementById(parent_id_check + 18).querySelector('.checker_black') == null) {
+                    if (document.getElementById(parent_id_check + 18).querySelector('.checker_black') == null && document.getElementById(parent_id_check + 18).querySelector('.checker_white') == null) {
                         need_capture = 2;
                     }
                 }
@@ -148,7 +154,7 @@ function check_need_capture(cell_color) {
             if (upper_left_cell != null && upper_left_cell.querySelector('.checker_white') != null) {
                 // Проверка на клетку 2 вертикали
                 if ((parent_id_check - 2) % 8 != 0 && parent_id_check - 18 > 0) {
-                    if (document.getElementById(parent_id_check - 18).querySelector('.checker_white') == null) {
+                    if (document.getElementById(parent_id_check - 18).querySelector('.checker_white') == null && document.getElementById(parent_id_check - 18).querySelector('.checker_black') == null) {
                         need_capture = 2;
                     }
                 }
@@ -156,7 +162,7 @@ function check_need_capture(cell_color) {
             if (upper_right_cell != null && upper_right_cell.querySelector('.checker_white') != null) {
                 // Проверка на клетку 7 вертикали
                 if ((parent_id_check + 1) % 8 != 0 && parent_id_check - 14 > 0) {
-                    if (document.getElementById(parent_id_check - 14).querySelector('.checker_white') == null) {
+                    if (document.getElementById(parent_id_check - 14).querySelector('.checker_white') == null && document.getElementById(parent_id_check - 14).querySelector('.checker_black') == null) {
                         need_capture = 2;
                     }
                 }
@@ -164,7 +170,7 @@ function check_need_capture(cell_color) {
             if (lower_left_cell != null && lower_left_cell.querySelector('.checker_white') != null) {
                 // Проверка на клетку 2 вертикали
                 if ((parent_id_check - 2) % 8 != 0 && parent_id_check + 14 < 65) {
-                    if (document.getElementById(parent_id_check + 14).querySelector('.checker_white') == null) {
+                    if (document.getElementById(parent_id_check + 14).querySelector('.checker_white') == null && document.getElementById(parent_id_check + 14).querySelector('.checker_black') == null) {
                         need_capture = 2;
                     }
                 }
@@ -172,7 +178,7 @@ function check_need_capture(cell_color) {
             if (lower_right_cell != null && lower_right_cell.querySelector('.checker_white') != null) {
                 // Проверка на клетку 7 вертикали
                 if ((parent_id_check + 1) % 8 != 0 && parent_id_check + 18 < 65) {
-                    if (document.getElementById(parent_id_check + 18).querySelector('.checker_white') == null) {
+                    if (document.getElementById(parent_id_check + 18).querySelector('.checker_white') == null && document.getElementById(parent_id_check + 18).querySelector('.checker_black') == null) {
                         need_capture = 2;
                     }
                 }
@@ -189,11 +195,26 @@ function add_move_cells(parent_id, cell_color) {
         move_cells[i].classList.remove('move_cell');
     }
 
-    need_capture = 1;
     parent_id = +parent_id;
 
+    // Проверка на то, должна ли ходить эта шашка
+    if (need_capture_again == 2) {
+        if (parent_id == +created_checker.parentElement.getAttribute('id')) {
+            can_move = 2;
+        } else {
+            can_move = 1;
+        }
+        console.log('продолжение хода');
+    }
+    need_capture = 1;
+    
+    console.log(can_move);
+    console.log(need_capture_again);
+
     // cell_color 1 - белые, 2 - черные
-    if (cell_color == 1) {
+    if (cell_color == 1 && (can_move == 2 && need_capture_again == 2 || need_capture_again == 1)) {
+        
+
         // Проверка других шашек
         check_need_capture(1);
 
@@ -206,7 +227,7 @@ function add_move_cells(parent_id, cell_color) {
         if (upper_left_cell != null && upper_left_cell.querySelector('.checker_black') != null) {
             // Проверка на клетку 2 вертикали
             if ((parent_id - 2) % 8 != 0 && parent_id - 18 > 0) {
-                if (document.getElementById(parent_id - 18).querySelector('.checker_black') == null) {
+                if (document.getElementById(parent_id - 18).querySelector('.checker_black') == null && document.getElementById(parent_id - 18).querySelector('.checker_white') == null) {
                     document.getElementById(parent_id - 18).classList.add('move_cell');
                     need_capture = 2;
                 }
@@ -215,7 +236,7 @@ function add_move_cells(parent_id, cell_color) {
         if (upper_right_cell != null && upper_right_cell.querySelector('.checker_black') != null) {
             // Проверка на клетку 7 вертикали
             if ((parent_id + 1) % 8 != 0 && parent_id - 14 > 0) {
-                if (document.getElementById(parent_id - 14).querySelector('.checker_black') == null) {
+                if (document.getElementById(parent_id - 14).querySelector('.checker_black') == null && document.getElementById(parent_id - 14).querySelector('.checker_white') == null) {
                     document.getElementById(parent_id - 14).classList.add('move_cell');
                     need_capture = 2;
                 }
@@ -224,7 +245,7 @@ function add_move_cells(parent_id, cell_color) {
         if (lower_left_cell != null && lower_left_cell.querySelector('.checker_black') != null) {
             // Проверка на клетку 2 вертикали
             if ((parent_id - 2) % 8 != 0 && parent_id + 14 < 65) {
-                if (document.getElementById(parent_id + 14).querySelector('.checker_black') == null) {
+                if (document.getElementById(parent_id + 14).querySelector('.checker_black') == null && document.getElementById(parent_id + 14).querySelector('.checker_white') == null) {
                     document.getElementById(parent_id + 14).classList.add('move_cell');
                     need_capture = 2;
                 }
@@ -233,14 +254,14 @@ function add_move_cells(parent_id, cell_color) {
         if (lower_right_cell != null && lower_right_cell.querySelector('.checker_black') != null) {
             // Проверка на клетку 7 вертикали
             if ((parent_id + 1) % 8 != 0 && parent_id + 18 < 65) {
-                if (document.getElementById(parent_id + 18).querySelector('.checker_black') == null) {
+                if (document.getElementById(parent_id + 18).querySelector('.checker_black') == null && document.getElementById(parent_id + 18).querySelector('.checker_white') == null) {
                     document.getElementById(parent_id + 18).classList.add('move_cell');
                     need_capture = 2;
                 }
             }
         }
 
-        if (need_capture == 1) {
+        if (need_capture == 1 ) {
             // Проверка свободных полей
             // Левая верхняя клетка
             if (upper_left_cell != null && upper_left_cell.querySelector('.checker_white') == null && upper_left_cell.querySelector('.checker_black') == null) {
@@ -257,7 +278,8 @@ function add_move_cells(parent_id, cell_color) {
                 }
             }
         }
-    } else {
+    } else if (cell_color == 2 && (can_move == 2 && need_capture_again == 2 || need_capture_again == 1)) {
+
         // Проверка других шашек
         check_need_capture(2);
 
@@ -270,7 +292,7 @@ function add_move_cells(parent_id, cell_color) {
         if (upper_left_cell != null && upper_left_cell.querySelector('.checker_white') != null) {
             // Проверка на клетку 2 вертикали
             if ((parent_id - 2) % 8 != 0 && parent_id - 18 > 0) {
-                if (document.getElementById(parent_id - 18).querySelector('.checker_white') == null) {
+                if (document.getElementById(parent_id - 18).querySelector('.checker_white') == null && document.getElementById(parent_id - 18).querySelector('.checker_black') == null) {
                     document.getElementById(parent_id - 18).classList.add('move_cell');
                     need_capture = 2;
                 }
@@ -279,7 +301,7 @@ function add_move_cells(parent_id, cell_color) {
         if (upper_right_cell != null && upper_right_cell.querySelector('.checker_white') != null) {
             // Проверка на клетку 7 вертикали
             if ((parent_id + 1) % 8 != 0 && parent_id - 14 > 0) {
-                if (document.getElementById(parent_id - 14).querySelector('.checker_white') == null) {
+                if (document.getElementById(parent_id - 14).querySelector('.checker_white') == null && document.getElementById(parent_id - 14).querySelector('.checker_black') == null) {
                     document.getElementById(parent_id - 14).classList.add('move_cell');
                     need_capture = 2;
                 }
@@ -288,7 +310,7 @@ function add_move_cells(parent_id, cell_color) {
         if (lower_left_cell != null && lower_left_cell.querySelector('.checker_white') != null) {
             // Проверка на клетку 2 вертикали
             if ((parent_id - 2) % 8 != 0 && parent_id + 14 < 65) {
-                if (document.getElementById(parent_id + 14).querySelector('.checker_white') == null) {
+                if (document.getElementById(parent_id + 14).querySelector('.checker_white') == null && document.getElementById(parent_id + 14).querySelector('.checker_black') == null) {
                     document.getElementById(parent_id + 14).classList.add('move_cell');
                     need_capture = 2;
                 }
@@ -297,7 +319,7 @@ function add_move_cells(parent_id, cell_color) {
         if (lower_right_cell != null && lower_right_cell.querySelector('.checker_white') != null) {
             // Проверка на клетку 7 вертикали
             if ((parent_id + 1) % 8 != 0 && parent_id + 18 < 65) {
-                if (document.getElementById(parent_id + 18).querySelector('.checker_white') == null) {
+                if (document.getElementById(parent_id + 18).querySelector('.checker_white') == null && document.getElementById(parent_id + 18).querySelector('.checker_black') == null) {
                     document.getElementById(parent_id + 18).classList.add('move_cell');
                     need_capture = 2;
                 }
@@ -337,6 +359,12 @@ for (let i = 0; i < white_checkers.length; i++) {
             parent_cell = chosen_checker.parentElement;
             parent_cell.style.backgroundColor = '#5cb334';
             parent_id = parent_cell.getAttribute('id'); // id клетки родителя
+
+            if (can_move == 2) {
+                need_capture == 2;
+                console.log('Нужно продолжать ход');
+            }
+
             add_move_cells(parent_id, 1);
         }
     })
@@ -355,6 +383,12 @@ for (let i = 0; i < black_checkers.length; i++) {
             parent_cell = chosen_checker.parentElement;
             parent_cell.style.backgroundColor = '#5cb334';
             parent_id = parent_cell.getAttribute('id'); // id клетки родителя
+
+            if (can_move == 2) {
+                need_capture == 2;
+                console.log('Нужно продолжать ход');
+            }
+
             add_move_cells(parent_id, 2);
         }
     })
@@ -368,11 +402,12 @@ for (let i = 0; i < cells.length; i++) {
             chosen_checker.remove();
             // Добавление новой шашки на месте хода
             let new_checker = document.createElement('div');
+            created_checker = new_checker;
 
             // Добавление класса новой шашке и удаление взятой шашки
             if (turn==1) {
                 new_checker.classList.add('checker_white');
-                turn = 2;
+                
                 if (+parent_id == +cells[i].getAttribute('id') + 18) {
                     cells[+cells[i].getAttribute('id') + 8].querySelector('.checker_black').remove();
                 }
@@ -387,7 +422,7 @@ for (let i = 0; i < cells.length; i++) {
                 }
             } else {
                 new_checker.classList.add('checker_black');
-                turn = 1;
+                
                 if (+parent_id == +cells[i].getAttribute('id') + 18) {
                     cells[+cells[i].getAttribute('id') + 8].querySelector('.checker_white').remove();
                 }
@@ -402,8 +437,6 @@ for (let i = 0; i < cells.length; i++) {
                 }
             }
             cells[i].appendChild(new_checker);
-            
-            
 
             // Добавление события выбора новой шашки
             new_checker.addEventListener('click', function () {
@@ -416,6 +449,12 @@ for (let i = 0; i < cells.length; i++) {
                     parent_cell = chosen_checker.parentElement;
                     parent_cell.style.backgroundColor = '#5cb334';
                     parent_id = parent_cell.getAttribute('id'); // id клетки родителя
+
+                    if (can_move == 2) {
+                        need_capture == 2;
+                        console.log('Нужно продолжать ход');
+                    }
+
                     add_move_cells(parent_id, 1);
                 } else if (turn == 2 && new_checker.classList.contains('checker_black') == true) {
                     if (chosen_checker.parentElement != null) {
@@ -426,6 +465,12 @@ for (let i = 0; i < cells.length; i++) {
                     parent_cell = chosen_checker.parentElement;
                     parent_cell.style.backgroundColor = '#5cb334';
                     parent_id = parent_cell.getAttribute('id'); // id клетки родителя
+
+                    if (can_move == 2) {
+                        need_capture == 2;
+                        console.log('Нужно продолжать ход');
+                    }
+
                     add_move_cells(parent_id, 2);
                 }
             })
@@ -436,6 +481,106 @@ for (let i = 0; i < cells.length; i++) {
                 move_cells[i].classList.remove('move_cell');
             }
             parent_cell.style.backgroundColor = '';
+
+            // Проверка необходимости бить
+            need_capture_again = 1;
+
+            if (turn == 1 && need_capture == 2) {
+                parent_id_check = +new_checker.parentElement.getAttribute('id');
+    
+                upper_left_cell = document.getElementById(parent_id_check - 9);
+                upper_right_cell = document.getElementById(parent_id_check - 7);
+                lower_left_cell = document.getElementById(parent_id_check + 7);
+                lower_right_cell = document.getElementById(parent_id_check + 9);
+                
+                // Проверка шашек соперника
+                if (upper_left_cell != null && upper_left_cell.querySelector('.checker_black') != null) {
+                    // Проверка на клетку 2 вертикали
+                    if ((parent_id_check - 2) % 8 != 0 && parent_id_check - 18 > 0) {
+                        if (document.getElementById(parent_id_check - 18).querySelector('.checker_black') == null && document.getElementById(parent_id_check - 18).querySelector('.checker_white') == null) {
+                            need_capture_again = 2;
+                        }
+                    }
+                }
+                if (upper_right_cell != null && upper_right_cell.querySelector('.checker_black') != null) {
+                    // Проверка на клетку 7 вертикали
+                    if ((parent_id_check + 1) % 8 != 0 && parent_id_check - 14 > 0) {
+                        if (document.getElementById(parent_id_check - 14).querySelector('.checker_black') == null && document.getElementById(parent_id_check - 14).querySelector('.checker_white') == null) {
+                            need_capture_again = 2;
+                        }
+                    }
+                }
+                if (lower_left_cell != null && lower_left_cell.querySelector('.checker_black') != null) {
+                    // Проверка на клетку 2 вертикали
+                    if ((parent_id_check - 2) % 8 != 0 && parent_id_check + 14 < 65) {
+                        if (document.getElementById(parent_id_check + 14).querySelector('.checker_black') == null && document.getElementById(parent_id_check + 14).querySelector('.checker_white') == null) {
+                            need_capture_again = 2;
+                        }
+                    }
+                }
+                if (lower_right_cell != null && lower_right_cell.querySelector('.checker_black') != null) {
+                    // Проверка на клетку 7 вертикали
+                    if ((parent_id_check + 1) % 8 != 0 && parent_id_check + 18 < 65) {
+                        if (document.getElementById(parent_id_check + 18).querySelector('.checker_black') == null && document.getElementById(parent_id_check + 18).querySelector('.checker_white') == null) {
+                            need_capture_again = 2;
+                        }
+                    }
+                }
+            } else if (turn == 2 && need_capture == 2) {
+                parent_id_check = +new_checker.parentElement.getAttribute('id');
+    
+                upper_left_cell = document.getElementById(parent_id_check - 9);
+                upper_right_cell = document.getElementById(parent_id_check - 7);
+                lower_left_cell = document.getElementById(parent_id_check + 7);
+                lower_right_cell = document.getElementById(parent_id_check + 9);
+                
+                // Проверка шашек соперника
+                if (upper_left_cell != null && upper_left_cell.querySelector('.checker_white') != null) {
+                    // Проверка на клетку 2 вертикали
+                    if ((parent_id_check - 2) % 8 != 0 && parent_id_check - 18 > 0) {
+                        if (document.getElementById(parent_id_check - 18).querySelector('.checker_white') == null && document.getElementById(parent_id_check - 18).querySelector('.checker_black') == null) {
+                            need_capture_again = 2;
+                        }
+                    }
+                }
+                if (upper_right_cell != null && upper_right_cell.querySelector('.checker_white') != null) {
+                    // Проверка на клетку 7 вертикали
+                    if ((parent_id_check + 1) % 8 != 0 && parent_id_check - 14 > 0) {
+                        if (document.getElementById(parent_id_check - 14).querySelector('.checker_white') == null && document.getElementById(parent_id_check - 14).querySelector('.checker_black') == null) {
+                            need_capture_again = 2;
+                        }
+                    }
+                }
+                if (lower_left_cell != null && lower_left_cell.querySelector('.checker_white') != null) {
+                    // Проверка на клетку 2 вертикали
+                    if ((parent_id_check - 2) % 8 != 0 && parent_id_check + 14 < 65) {
+                        if (document.getElementById(parent_id_check + 14).querySelector('.checker_white') == null && document.getElementById(parent_id_check + 14).querySelector('.checker_black') == null) {
+                            need_capture_again = 2;
+                        }
+                    }
+                }
+                if (lower_right_cell != null && lower_right_cell.querySelector('.checker_white') != null) {
+                    // Проверка на клетку 7 вертикали
+                    if ((parent_id_check + 1) % 8 != 0 && parent_id_check + 18 < 65) {
+                        if (document.getElementById(parent_id_check + 18).querySelector('.checker_white') == null && document.getElementById(parent_id_check + 18).querySelector('.checker_black') == null) {
+                            need_capture_again = 2;
+                        }
+                    }
+                }
+            }
+
+            if (need_capture_again == 1) {
+                if (turn == 1) {
+                    turn = 2;
+                } else {
+                    turn = 1;
+                }
+                need_capture = 1;
+                can_move = 1;
+                console.log('ход завершен');
+                // Добавить тут проверку окончания партии
+                // А также запись хода в таблицу
+            }
         }
     })
 }
