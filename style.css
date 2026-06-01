@@ -310,3 +310,7 @@ footer {
     border-radius: 30px;
     outline: 3px solid rgb(95, 95, 95)
 }
+
+.move_cell {
+    background-color: #85df5c;
+}
