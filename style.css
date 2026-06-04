@@ -314,3 +314,12 @@ footer {
 .move_cell {
     background-color: #85df5c;
 }
+
+.king {
+    outline: 4px solid rgb(255, 251, 39)
+}
+
+.test {
+    outline: 2px dashed rgb(36, 108, 241);
+    outline-offset: -2px;
+}
