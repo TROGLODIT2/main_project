@@ -91,6 +91,7 @@ let created_checker = '';
 // 1 - нельзя идти, 2 - можно идти
 let can_move = 1;
 
+// Неактуально удалить позже
 let upper_left_cell = '';
 let upper_right_cell = '';
 let lower_left_cell = '';
@@ -161,6 +162,137 @@ function check_free_cell(direction, lines, cell_id) {
     }
 }
 
+function check_edge_cell(direction, lines, cell_id) {
+    // Настроить проверку на крайние клетки доски
+    let check_cell = '';
+    if (direction == 'topleft') {
+        check_cell = cell_id - 9 * lines;
+        if (check_cell < 9 || (check_cell + 7) % 8 == 0) {
+            return true
+        } else {
+            return false
+        }
+    } else if (direction == 'topright') {
+        check_cell = cell_id - 7 * lines;
+        if (check_cell < 9 || check_cell % 8 == 0) {
+            return true
+        } else {
+            return false
+        }
+    } else if (direction == 'bottomleft') {
+        check_cell = cell_id + 7 * lines;
+        if (check_cell > 56 || (check_cell + 7) % 8 == 0) {
+            return true
+        } else {
+            return false
+        }
+    } else if (direction == 'bottomright') {
+        check_cell = cell_id + 9 * lines;
+        if (check_cell > 56 || check_cell % 8 == 0) {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+}
+
+function add_move_checker(direction, lines, cell_id) {
+    if (direction == 'topleft') {
+        document.getElementById(cell_id - 9 * lines).classList.add('move_cell');
+    } else if (direction == 'topright') {
+        document.getElementById(cell_id - 7 * lines).classList.add('move_cell');
+    } else if (direction == 'bottomleft') {
+        document.getElementById(cell_id + 7 * lines).classList.add('move_cell');
+    } else if (direction == 'bottomright') {
+        document.getElementById(cell_id + 9 * lines).classList.add('move_cell');
+    }
+}
+
+function check_checker_capture(direction, color_checker, cell_id, add_move) {
+    let side_check = '';
+    if (direction == 'topleft' || direction == 'bottomleft') {
+        side_check = 'left';
+    } else if (direction == 'topright' || direction == 'bottomright') {
+        side_check = 'right';
+    }
+    
+    let color_check = '';
+    if (color_checker == 'white') {
+        color_check = 'black';
+    } else if (color_checker == 'black') {
+        color_check = 'white';
+    }
+    // Проверка необходимости бить у обычной шашки
+    if (check_checker(direction, 1, color_check, cell_id) == true) {
+        if (check_cell_correct(side_check, cell_id) == true) {
+            if (check_free_cell(direction, 2, cell_id) == true) {
+                need_capture = 2;
+                console.log('Тест');
+                console.log(add_move);
+                if (add_move == true) {
+                    add_move_checker(direction, 2, cell_id);
+                }
+            }
+        }
+    }
+}
+
+function check_king_capture(direction, color_checker, cell_id) {
+    let color_check = '';
+    if (color_checker == 'white') {
+        color_check = 'black';
+    } else if (color_checker == 'black') {
+        color_check = 'white';
+    }
+
+    let is_checker = false;
+    let free_cell_after = false;
+    // Проверка клетки на крайнюю
+    if (check_edge_cell(direction, 0, cell_id) == false) {
+        for (let j = 1; j < 8; j ++) {
+            if (check_checker(direction, j, color_checker, cell_id) == false) {
+                if (is_checker == false && free_cell_after == false) {
+                    // До встречи шашки противника
+                    if (check_checker(direction, j, color_check, cell_id) == true) {
+                        is_checker = true;
+                    }
+                } else if (is_checker == true && free_cell_after == false) {
+                    // Проверка свободной клетки после шашки противника
+                    if (check_free_cell(direction, j, cell_id) == true) {
+                        free_cell_after = true;
+                    } else {
+                        break
+                    }
+                }
+                if (is_checker == true && free_cell_after == true) {
+                    // Когда пройдена шашка противника и после нее есть свободная клетка
+                    if (check_checker(direction, j, color_check, cell_id) == true) {
+                    } else {
+                        need_capture = 2;
+                    }
+                }
+                // Проверка клетки на крайнюю
+                if (check_edge_cell(direction, j, cell_id) == true) {
+                    break
+                }
+            } else {
+                break
+            }
+        }
+    } else {
+    }
+}
+
+function check_checker_moves(direction, cell_id) {
+    if (check_checker(direction, 1, 'white', cell_id) == false && check_checker(direction, 1, 'black', cell_id) == false) {
+        // Проверка на левую крайнюю клетку
+        if (check_edge_cell(direction, 0, cell_id) == false) {
+            add_move_checker(direction, 1, cell_id)
+        }
+    }
+}
+
 // Проверка необходимости взятия своими шашками
 function check_need_capture(cell_color) {
     if (cell_color == 1) {
@@ -169,122 +301,15 @@ function check_need_capture(cell_color) {
             parent_id_check = +remaining_checkers[i].parentElement.getAttribute('id');
             if (remaining_checkers[i].classList.contains('king') == false) {
                 // Проверка необходимости бить
-                if (check_checker('topleft', 1, 'black', parent_id_check) == true) {
-                    if (check_cell_correct('left', parent_id_check) == true) {
-                        if (check_free_cell('topleft', 2, parent_id_check) == true) {
-                            need_capture = 2;
-                        }
-                    }
-                }
-
-                if (check_checker('topright', 1, 'black', parent_id_check) == true) {
-                    if (check_cell_correct('right', parent_id_check) == true) {
-                        if (check_free_cell('topright', 2, parent_id_check) == true) {
-                            need_capture = 2;
-                        }
-                    }
-                }
-
-                if (check_checker('bottomleft', 1, 'black', parent_id_check) == true) {
-                    if (check_cell_correct('left', parent_id_check) == true) {
-                        if (check_free_cell('bottomleft', 2, parent_id_check) == true) {
-                            need_capture = 2;
-                        }
-                    }
-                }
-
-                if (check_checker('bottomright', 1, 'black', parent_id_check) == true) {
-                    if (check_cell_correct('right', parent_id_check) == true) {
-                        if (check_free_cell('bottomright', 2, parent_id_check) == true) {
-                            need_capture = 2;
-                        }
-                    }
-                }
+                check_checker_capture('topleft', 'white', parent_id_check, false);
+                check_checker_capture('topright', 'white', parent_id_check, false);
+                check_checker_capture('bottomleft', 'white', parent_id_check, false);
+                check_checker_capture('bottomright', 'white', parent_id_check, false);
             } else {
-                // Проверка дамки ДОБАВИТЬ ЭТОТ СКРИПТ ЧЕРНОЙ ДАМКЕ, А ТАКЖЕ СДЕЛАТЬ ВЫБОР ХОДА ЗА ДАМКУ
-                console.log('Проверка ходов дамки');
-                let is_checker = false;
-                for (let j = 1; j < 8; j ++) {
-                    console.log('начало проверки1');
-                    if (parent_id_check - j*9 > 0 && cells[(parent_id_check - j*9)-1].querySelector('.checker_white') == null) {
-                        if (is_checker == true) {
-                            if (cells[(parent_id_check - j*9)-1].querySelector('.checker_black') != null) {
-                                break
-                            } else {
-                                need_capture = 2;
-                                cells[parent_id_check - j*9 - 1].classList.add('test'); // УДАЛИТЬ ПОСЛЕ ТЕСТОВ
-                            }
-                        } else {
-                            if (cells[(parent_id_check - j*9)-1].querySelector('.checker_black') != null) {
-                                is_checker = true;
-                            }
-                        }
-                    } else {
-                        break
-                    }
-                }
-
-                is_checker = false;
-                for (let j = 1; j < 8; j ++) {
-                    console.log('начало проверки2');
-                    if (parent_id_check - j*7 > 0 && cells[(parent_id_check - j*7)-1].querySelector('.checker_white') == null) {
-                        if (is_checker == true) {
-                            if (cells[(parent_id_check - j*7)-1].querySelector('.checker_black') != null) {
-                                break
-                            } else {
-                                need_capture = 2;
-                                cells[parent_id_check - j*7 - 1].classList.add('test'); // УДАЛИТЬ ПОСЛЕ ТЕСТОВ
-                            }
-                        } else {
-                            if (cells[(parent_id_check - j*7)-1].querySelector('.checker_black') != null) {
-                                is_checker = true;
-                            }
-                        }
-                    } else {
-                        break
-                    }
-                }
-                is_checker = false;
-                for (let j = 1; j < 8; j ++) {
-                    console.log('начало проверки3');
-                    if (parent_id_check + j*9 < 65 && cells[(parent_id_check + j*9)-1].querySelector('.checker_white') == null) {
-                        if (is_checker == true) {
-                            if (cells[(parent_id_check + j*9)-1].querySelector('.checker_black') != null) {
-                                break
-                            } else {
-                                need_capture = 2;
-                                cells[parent_id_check + j*9 - 1].classList.add('test'); // УДАЛИТЬ ПОСЛЕ ТЕСТОВ
-                            }
-                        } else {
-                            if (cells[(parent_id_check + j*9)-1].querySelector('.checker_black') != null) {
-                                is_checker = true;
-                            }
-                        }
-                    } else {
-                        break
-                    }
-                }
-
-                is_checker = false;
-                for (let j = 1; j < 8; j ++) {
-                    console.log('начало проверки4');
-                    if (parent_id_check + j*7 < 65 && cells[(parent_id_check + j*7)-1].querySelector('.checker_white') == null) {
-                        if (is_checker == true) {
-                            if (cells[(parent_id_check + j*7)-1].querySelector('.checker_black') != null) {
-                                break
-                            } else {
-                                need_capture = 2;
-                                cells[parent_id_check + j*7 - 1].classList.add('test'); // УДАЛИТЬ ПОСЛЕ ТЕСТОВ
-                            }
-                        } else {
-                            if (cells[(parent_id_check + j*7)-1].querySelector('.checker_black') != null) {
-                                is_checker = true;
-                            }
-                        }
-                    } else {
-                        break
-                    }
-                }
+                check_king_capture('topleft', 'white', parent_id_check);
+                check_king_capture('topright', 'white', parent_id_check);
+                check_king_capture('bottomleft', 'white', parent_id_check);
+                check_king_capture('bottomright', 'white', parent_id_check);
             }
             
         }
@@ -295,122 +320,16 @@ function check_need_capture(cell_color) {
 
             if (remaining_checkers[i].classList.contains('king') == false) {
                 // Проверка необходимости бить
-                if (check_checker('topleft', 1, 'white', parent_id_check) == true) {
-                    if (check_cell_correct('left', parent_id_check) == true) {
-                        if (check_free_cell('topleft', 2, parent_id_check) == true) {
-                            need_capture = 2;
-                        }
-                    }
-                }
+                check_checker_capture('topleft', 'black', parent_id_check, false);
+                check_checker_capture('topright', 'black', parent_id_check, false);
+                check_checker_capture('bottomleft', 'black', parent_id_check, false);
+                check_checker_capture('bottomright', 'black', parent_id_check, false);
 
-                if (check_checker('topright', 1, 'white', parent_id_check) == true) {
-                    if (check_cell_correct('right', parent_id_check) == true) {
-                        if (check_free_cell('topright', 2, parent_id_check) == true) {
-                            need_capture = 2;
-                        }
-                    }
-                }
-
-                if (check_checker('bottomleft', 1, 'white', parent_id_check) == true) {
-                    if (check_cell_correct('left', parent_id_check) == true) {
-                        if (check_free_cell('bottomleft', 2, parent_id_check) == true) {
-                            need_capture = 2;
-                        }
-                    }
-                }
-
-                if (check_checker('bottomright', 1, 'white', parent_id_check) == true) {
-                    if (check_cell_correct('right', parent_id_check) == true) {
-                        if (check_free_cell('bottomright', 2, parent_id_check) == true) {
-                            need_capture = 2;
-                        }
-                    }
-                }
             } else {
-                // Проверка дамки ДОБАВИТЬ ЭТОТ СКРИПТ ЧЕРНОЙ ДАМКЕ, А ТАКЖЕ СДЕЛАТЬ ВЫБОР ХОДА ЗА ДАМКУ
-                console.log('Проверка ходов дамки');
-                let is_checker = false;
-                for (let j = 1; j < 8; j ++) {
-                    console.log('начало проверки1');
-                    if (parent_id_check - j*9 > 0 && cells[(parent_id_check - j*9)-1].querySelector('.checker_black') == null) {
-                        if (is_checker == true) {
-                            if (cells[(parent_id_check - j*9)-1].querySelector('.checker_white') != null) {
-                                break
-                            } else {
-                                need_capture = 2;
-                                cells[parent_id_check - j*9 - 1].classList.add('test'); // УДАЛИТЬ ПОСЛЕ ТЕСТОВ
-                            }
-                        } else {
-                            if (cells[(parent_id_check - j*9)-1].querySelector('.checker_white') != null) {
-                                is_checker = true;
-                            }
-                        }
-                    } else {
-                        break
-                    }
-                }
-
-                is_checker = false;
-                for (let j = 1; j < 8; j ++) {
-                    console.log('начало проверки2');
-                    if (parent_id_check - j*7 > 0 && cells[(parent_id_check - j*7)-1].querySelector('.checker_black') == null) {
-                        if (is_checker == true) {
-                            if (cells[(parent_id_check - j*7)-1].querySelector('.checker_white') != null) {
-                                break
-                            } else {
-                                need_capture = 2;
-                                cells[parent_id_check - j*7 - 1].classList.add('test'); // УДАЛИТЬ ПОСЛЕ ТЕСТОВ
-                            }
-                        } else {
-                            if (cells[(parent_id_check - j*7)-1].querySelector('.checker_white') != null) {
-                                is_checker = true;
-                            }
-                        }
-                    } else {
-                        break
-                    }
-                }
-                is_checker = false;
-                for (let j = 1; j < 8; j ++) {
-                    console.log('начало проверки3');
-                    if (parent_id_check + j*9 < 65 && cells[(parent_id_check + j*9)-1].querySelector('.checker_black') == null) {
-                        if (is_checker == true) {
-                            if (cells[(parent_id_check + j*9)-1].querySelector('.checker_white') != null) {
-                                break
-                            } else {
-                                need_capture = 2;
-                                cells[parent_id_check + j*9 - 1].classList.add('test'); // УДАЛИТЬ ПОСЛЕ ТЕСТОВ
-                            }
-                        } else {
-                            if (cells[(parent_id_check + j*9)-1].querySelector('.checker_white') != null) {
-                                is_checker = true;
-                            }
-                        }
-                    } else {
-                        break
-                    }
-                }
-
-                is_checker = false;
-                for (let j = 1; j < 8; j ++) {
-                    console.log('начало проверки4');
-                    if (parent_id_check + j*7 < 65 && cells[(parent_id_check + j*7)-1].querySelector('.checker_black') == null) {
-                        if (is_checker == true) {
-                            if (cells[(parent_id_check + j*7)-1].querySelector('.checker_white') != null) {
-                                break
-                            } else {
-                                need_capture = 2;
-                                cells[parent_id_check + j*7 - 1].classList.add('test'); // УДАЛИТЬ ПОСЛЕ ТЕСТОВ
-                            }
-                        } else {
-                            if (cells[(parent_id_check + j*7)-1].querySelector('.checker_white') != null) {
-                                is_checker = true;
-                            }
-                        }
-                    } else {
-                        break
-                    }
-                }
+                check_king_capture('topleft', 'black', parent_id_check);
+                check_king_capture('topright', 'black', parent_id_check);
+                check_king_capture('bottomleft', 'black', parent_id_check);
+                check_king_capture('bottomright', 'black', parent_id_check);
             }
         }
     }
@@ -444,63 +363,20 @@ function add_move_cells(parent_id, cell_color) {
     if (cell_color == 1 && (can_move == 2 && need_capture_again == 2 || need_capture_again == 1)) {
         // Проверка других шашек
         check_need_capture(1);
-        
+
         if (cells[parent_id-1].querySelector('.checker_white').classList.contains('king') == false) {
-            if (check_checker('topleft', 1, 'black', parent_id) == true) {
-                if (check_cell_correct('left', parent_id) == true) {
-                    if (check_free_cell('topleft', 2, parent_id) == true) {
-                        document.getElementById(parent_id - 18).classList.add('move_cell');
-                        need_capture = 2;
-                    }
-                }
-            }
-
-            if (check_checker('topright', 1, 'black', parent_id) == true) {
-                if (check_cell_correct('right', parent_id) == true) {
-                    if (check_free_cell('topright', 2, parent_id) == true) {
-                        document.getElementById(parent_id - 14).classList.add('move_cell');
-                        need_capture = 2;
-                    }
-                }
-            }
-
-            if (check_checker('bottomleft', 1, 'black', parent_id) == true) {
-                if (check_cell_correct('left', parent_id) == true) {
-                    if (check_free_cell('bottomleft', 2, parent_id) == true) {
-                        document.getElementById(parent_id + 14).classList.add('move_cell');
-                        need_capture = 2;
-                    }
-                }
-            }
-
-            if (check_checker('bottomright', 1, 'black', parent_id) == true) {
-                if (check_cell_correct('right', parent_id) == true) {
-                    if (check_free_cell('bottomright', 2, parent_id) == true) {
-                        document.getElementById(parent_id + 18).classList.add('move_cell');
-                        need_capture = 2;
-                    }
-                }
-            }
-
+            check_checker_capture('topleft', 'white', parent_id, true);
+            check_checker_capture('topright', 'white', parent_id, true);
+            check_checker_capture('bottomleft', 'white', parent_id, true);
+            check_checker_capture('bottomright', 'white', parent_id, true);
+            
             if (need_capture == 1) {
-                // Проверка свободных полей
-                // Левая верхняя клетка
-                if (check_checker('topleft', 1, 'white', parent_id) == false && check_checker('topleft', 1, 'black', parent_id) == false) {
-                    // Проверка на левую крайнюю клетку
-                    if ((parent_id - 9) % 8 != 0 && parent_id - 9 > 0) {
-                        document.getElementById(parent_id - 9).classList.add('move_cell');
-                    }
-                }
-                // Правая верхняя клетка
-                if (check_checker('topright', 1, 'white', parent_id) == false && check_checker('topright', 1, 'black', parent_id) == false) {
-                    // Проверка на правую крайнюю клетку
-                    if (parent_id % 8 != 0 && parent_id - 7 > 0) {
-                        document.getElementById(parent_id - 7).classList.add('move_cell');
-                    }
-                }
+                check_checker_moves('topleft', parent_id);
+                check_checker_moves('topright', parent_id);
             }
         } else {
             if (need_capture == 1) {
+
                 // ИСПРАВИТЬ БАГИ С ОТОБРАЖЕНИЕМ НЕКОРРЕКТНЫХ ХОДОВ
                 console.log('Добаление досупных ходов');
                 for (let j = 1; j < 8; j ++) {
@@ -596,58 +472,14 @@ function add_move_cells(parent_id, cell_color) {
         check_need_capture(2);
         
         if (cells[parent_id-1].querySelector('.checker_black').classList.contains('king') == false) {
-            if (check_checker('topleft', 1, 'white', parent_id) == true) {
-                if (check_cell_correct('left', parent_id) == true) {
-                    if (check_free_cell('topleft', 2, parent_id) == true) {
-                        document.getElementById(parent_id - 18).classList.add('move_cell');
-                        need_capture = 2;
-                    }
-                }
-            }
-
-            if (check_checker('topright', 1, 'white', parent_id) == true) {
-                if (check_cell_correct('right', parent_id) == true) {
-                    if (check_free_cell('topright', 2, parent_id) == true) {
-                        document.getElementById(parent_id - 14).classList.add('move_cell');
-                        need_capture = 2;
-                    }
-                }
-            }
-
-            if (check_checker('bottomleft', 1, 'white', parent_id) == true) {
-                if (check_cell_correct('left', parent_id) == true) {
-                    if (check_free_cell('bottomleft', 2, parent_id) == true) {
-                        document.getElementById(parent_id + 14).classList.add('move_cell');
-                        need_capture = 2;
-                    }
-                }
-            }
-
-            if (check_checker('bottomright', 1, 'white', parent_id) == true) {
-                if (check_cell_correct('right', parent_id) == true) {
-                    if (check_free_cell('bottomright', 2, parent_id) == true) {
-                        document.getElementById(parent_id + 18).classList.add('move_cell');
-                        need_capture = 2;
-                    }
-                }
-            }
+            check_checker_capture('topleft', 'black', parent_id, true);
+            check_checker_capture('topright', 'black', parent_id, true);
+            check_checker_capture('bottomleft', 'black', parent_id, true);
+            check_checker_capture('bottomright', 'black', parent_id, true);
 
             if (need_capture == 1) {
-                // Проверка свободных полей
-                // Левая верхняя клетка
-                if (check_checker('bottomleft', 1, 'white', parent_id) == false && check_checker('bottomleft', 1, 'black', parent_id) == false) {
-                    // Проверка на левую крайнюю клетку
-                    if ((parent_id + 7) % 8 != 0 && parent_id + 7 < 65) {
-                        document.getElementById(parent_id + 7).classList.add('move_cell');
-                    }
-                }
-                // Правая верхняя клетка
-                if (check_checker('bottomright', 1, 'white', parent_id) == false && check_checker('bottomright', 1, 'black', parent_id) == false) {
-                    // Проверка на правую крайнюю клетку
-                    if (parent_id % 8 != 0 && parent_id + 9 < 65) {
-                        document.getElementById(parent_id + 9).classList.add('move_cell');
-                    }
-                }
+                check_checker_moves('bottomleft', parent_id);
+                check_checker_moves('bottomright', parent_id);
             }
         } else {
 
@@ -802,73 +634,27 @@ for (let i = 0; i < cells.length; i++) {
 
             if (turn == 1 && need_capture == 2) {
                 parent_id_check = +new_checker.parentElement.getAttribute('id');
-    
-                // Проверка необходимости бить
-                if (check_checker('topleft', 1, 'black', parent_id_check) == true) {
-                    if (check_cell_correct('left', parent_id_check) == true) {
-                        if (check_free_cell('topleft', 2, parent_id_check) == true) {
-                            need_capture_again = 2;
-                        }
-                    }
-                }
+                
+                need_capture = 1;
+                check_checker_capture('topleft', 'white', parent_id_check, false);
+                check_checker_capture('topright', 'white', parent_id_check, false);
+                check_checker_capture('bottomleft', 'white', parent_id_check, false);
+                check_checker_capture('bottomright', 'white', parent_id_check, false);
 
-                if (check_checker('topright', 1, 'black', parent_id_check) == true) {
-                    if (check_cell_correct('right', parent_id_check) == true) {
-                        if (check_free_cell('topright', 2, parent_id_check) == true) {
-                            need_capture_again = 2;
-                        }
-                    }
-                }
-
-                if (check_checker('bottomleft', 1, 'black', parent_id_check) == true) {
-                    if (check_cell_correct('left', parent_id_check) == true) {
-                        if (check_free_cell('bottomleft', 2, parent_id_check) == true) {
-                            need_capture_again = 2;
-                        }
-                    }
-                }
-
-                if (check_checker('bottomright', 1, 'black', parent_id_check) == true) {
-                    if (check_cell_correct('right', parent_id_check) == true) {
-                        if (check_free_cell('bottomright', 2, parent_id_check) == true) {
-                            need_capture_again = 2;
-                        }
-                    }
+                if (need_capture == 2) {
+                    need_capture_again = 2;
                 }
             } else if (turn == 2 && need_capture == 2) {
                 parent_id_check = +new_checker.parentElement.getAttribute('id');
     
-                // Проверка необходимости бить
-                if (check_checker('topleft', 1, 'white', parent_id_check) == true) {
-                    if (check_cell_correct('left', parent_id_check) == true) {
-                        if (check_free_cell('topleft', 2, parent_id_check) == true) {
-                            need_capture_again = 2;
-                        }
-                    }
-                }
+                need_capture = 1;
+                check_checker_capture('topleft', 'black', parent_id_check, false);
+                check_checker_capture('topright', 'black', parent_id_check, false);
+                check_checker_capture('bottomleft', 'black', parent_id_check, false);
+                check_checker_capture('bottomright', 'black', parent_id_check, false);
 
-                if (check_checker('topright', 1, 'white', parent_id_check) == true) {
-                    if (check_cell_correct('right', parent_id_check) == true) {
-                        if (check_free_cell('topright', 2, parent_id_check) == true) {
-                            need_capture_again = 2;
-                        }
-                    }
-                }
-
-                if (check_checker('bottomleft', 1, 'white', parent_id_check) == true) {
-                    if (check_cell_correct('left', parent_id_check) == true) {
-                        if (check_free_cell('bottomleft', 2, parent_id_check) == true) {
-                            need_capture_again = 2;
-                        }
-                    }
-                }
-
-                if (check_checker('bottomright', 1, 'white', parent_id_check) == true) {
-                    if (check_cell_correct('right', parent_id_check) == true) {
-                        if (check_free_cell('bottomright', 2, parent_id_check) == true) {
-                            need_capture_again = 2;
-                        }
-                    }
+                if (need_capture == 2) {
+                    need_capture_again = 2;
                 }
             }
 
