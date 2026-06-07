@@ -92,14 +92,31 @@ let need_capture_again_king = false;
 // 1 - нельзя идти, 2 - можно идти
 let can_move = 1;
 
-// Список шашек взятых дамкой
+// Список параметров для удаления шашек взятых дамкой
 let captured_checkers = [];
+
+// Позиции шашек взятых дамкой
+let captured_checkers_position = [];
 
 // Неактуально удалить позже
 let upper_left_cell = '';
 let upper_right_cell = '';
 let lower_left_cell = '';
 let lower_right_cell = '';
+
+function get_position(direction, lines, cell_id) {
+    let check_cell = '';
+    if (direction == 'topleft') {
+        check_cell = cell_id - 9 * lines;
+    } else if (direction == 'topright') {
+        check_cell = cell_id - 7 * lines;
+    } else if (direction == 'bottomleft') {
+        check_cell = cell_id + 7 * lines;
+    } else if (direction == 'bottomright') {
+        check_cell = cell_id + 9 * lines;
+    }
+    return check_cell
+}
 
 function check_checker(direction, lines, color_check, cell_id) {
     let check_cell = '';
@@ -232,8 +249,6 @@ function check_checker_capture(direction, color_checker, cell_id, add_move) {
         if (check_cell_correct(side_check, cell_id) == true) {
             if (check_free_cell(direction, 2, cell_id) == true) {
                 need_capture = 2;
-                console.log('Тест');
-                console.log(add_move);
                 if (add_move == true) {
                     add_move_checker(direction, 2, cell_id);
                 }
@@ -254,6 +269,12 @@ function check_king_capture_return(direction, color_checker, cell_id) {
     // Проверка клетки на крайнюю
     if (check_edge_cell(direction, 0, cell_id) == false) {
         for (let j = 1; j < 8; j ++) {
+            // Проверка на уже забранную шашку
+            if (captured_checkers_position.includes(get_position(direction, j, cell_id)) == true) {
+                console.log('Обнаружена уже взятая шашка');
+                return false
+            }
+
             if (check_checker(direction, j, color_checker, cell_id) == false) {
                 if (is_checker == false) {
                     // До встречи шашки противника
@@ -337,7 +358,7 @@ function check_diagonal_captures(direction, color_checker, lines, cell_id, add_m
         check_cell = cell_id + 9 * lines;
     }
 
-    if (check_edge_cell(direction, 0, check_cell) == false) {
+    if (check_edge_cell(direction, 0, cell_id) == false) {
         for (let j = 0; j < 8; j++) {
             // Проверка на шашку
             if (check_free_cell(direction, j, check_cell) == false) {
@@ -382,6 +403,11 @@ function check_king_capture(direction, color_checker, cell_id, add_move) {
     if (check_edge_cell(direction, 0, cell_id) == false) {
         for (let j = 1; j < 8; j ++) {
             if (check_checker(direction, j, color_checker, cell_id) == false) {
+                // Проверка на уже забранную шашку
+                if (captured_checkers_position.includes(get_position(direction, j, cell_id)) == true) {
+                    console.log('Обнаружена уже взятая шашка');
+                    break
+                }
                 if (is_checker == false && free_cell_after == false) {
                     // До встречи шашки противника
                     if (check_checker(direction, j, color_check, cell_id) == true) {
@@ -410,10 +436,13 @@ function check_king_capture(direction, color_checker, cell_id, add_move) {
                         if (add_move == true) {
                             // Добавить событие взятия дамкой
                             // Проверка диагонаей
+                            console.log('Проверка диагоналей');
+
                             check_diagonal_captures(direction, color_checker, j, cell_id, false);
                             check_diagonal_captures(direction, color_checker, j, cell_id, true);
                         }
                         need_capture = 2;
+                        console.log('Нужно бить');
                     }
                 }
                 // Проверка клетки на крайнюю
@@ -436,7 +465,33 @@ function check_checker_moves(direction, cell_id) {
     }
 }
 
-function delete_checker(direction, color_check, lines, cell_id) {
+function get_direction(cell_id, new_cell_id) {
+    let result = new_cell_id - cell_id;
+    if (result % 9 == 0) {
+        if (Math.floor(result / 9) > 0) {
+            return 'bottomright'
+        } else {
+            return 'topleft'
+        }
+    } else if (result % 7 == 0) {
+        if (Math.floor(result / 7) > 0) {
+            return 'bottomleft'
+        } else {
+            return 'topright'
+        }
+    }
+}
+
+function count_lines(direction, cell_id, new_cell_id) {
+    let result = +new_cell_id - cell_id;
+    if (direction == 'topleft' || direction == 'bottomright') {
+        return Math.abs(Math.floor(result / 9));
+    } else if (direction == 'topright' || direction == 'bottomleft'){
+        return Math.abs(Math.floor(result / 7));
+    }
+}
+
+function delete_checker(direction, color_check, lines, cell_id, is_king) {
     // ИСПРАВИТЬ НИЖНИЕ НАПРАВЛЕНИЯ
     let check_cell = '';
 
@@ -448,14 +503,8 @@ function delete_checker(direction, color_check, lines, cell_id) {
     }
 
     cell_id = +cell_id;
-    console.log(direction);
-    console.log(cell_id);
-    console.log('Результати');
-    console.log(check_edge_cell(direction, 0, cell_id));
 
     if (check_edge_cell(direction, 0, cell_id) == false) { // Проверка на край
-        console.log('Клетка не на краю');
-        console.log(lines);
         for (let j = 1; j < lines; j++) {
             if (direction == 'topleft') {
                 check_cell = cell_id - 9 * j;
@@ -466,13 +515,16 @@ function delete_checker(direction, color_check, lines, cell_id) {
             } else if (direction == 'bottomright') {
                 check_cell = cell_id + 9 * j;
             }
-            console.log(check_cell);
-            console.log(check_checker(direction, j, color_check, cell_id));
 
             // Удаление шашки
             if (check_checker(direction, j, color_check, cell_id) == true) {
-                document.getElementById(check_cell).querySelector(check_selector).remove();
-                console.log('Удалена шашка на клетке', check_cell);
+                if (is_king == false) {
+                    document.getElementById(check_cell).querySelector(check_selector).remove();
+                    console.log('Удалена шашка на клетке', check_cell);
+                } else {
+                    captured_checkers_position.push(check_cell);
+                    console.log(`id взятой дамокой шашки - ${check_cell}`);
+                }
                 break
             }
             // Проверка на край
@@ -545,9 +597,6 @@ function add_move_cells(parent_id, cell_color) {
         console.log('продолжение хода');
     }
     need_capture = 1;
-    
-    console.log(can_move);
-    console.log(need_capture_again);
 
     // cell_color 1 - белые, 2 - черные
     if (cell_color == 1 && (can_move == 2 && need_capture_again == 2 || need_capture_again == 1)) {
@@ -662,36 +711,30 @@ for (let i = 0; i < cells.length; i++) {
                 new_checker.classList.add('king');
             }
 
+            // Определение направления хода
+            let move_direction = get_direction(+parent_id, +cells[i].getAttribute('id'));
+            // Определение расстояния между старым и новым положением
+            let move_lines = count_lines(move_direction, +parent_id, +cells[i].getAttribute('id'));
+
+            // Добавить в функции проверки ходов проверку списка взятых шашек
+
             // Добавление класса новой шашке и удаление взятой шашки
             if (turn==1) {
                 new_checker.classList.add('checker_white');
+                if (is_king == false) {
+                    delete_checker(move_direction, 'black', move_lines, parent_id, false);
+                } else {
+                    delete_checker(move_direction, 'black', move_lines, parent_id, true);
+                    captured_checkers.push([move_direction, 'black', move_lines, parent_id]);
+                }
                 
-                if (+parent_id == +cells[i].getAttribute('id') + 18) {
-                    delete_checker('topleft', 'black', 2, parent_id);
-                }
-                if (+parent_id == +cells[i].getAttribute('id') + 14) {
-                    delete_checker('topright', 'black', 2, parent_id);
-                }
-                if (+parent_id == +cells[i].getAttribute('id') - 18) {
-                    delete_checker('bottomright', 'black', 2, parent_id);
-                }
-                if (+parent_id == +cells[i].getAttribute('id') - 14) {
-                    delete_checker('bottomleft', 'black', 2, parent_id);
-                }
             } else {
                 new_checker.classList.add('checker_black');
-                
-                if (+parent_id == +cells[i].getAttribute('id') + 18) {
-                    delete_checker('topleft', 'white', 2, parent_id);
-                }
-                if (+parent_id == +cells[i].getAttribute('id') + 14) {
-                    delete_checker('topright', 'white', 2, parent_id);
-                }
-                if (+parent_id == +cells[i].getAttribute('id') - 18) {
-                    delete_checker('bottomright', 'white', 2, parent_id);
-                }
-                if (+parent_id == +cells[i].getAttribute('id') - 14) {
-                    delete_checker('bottomleft', 'white', 2, parent_id);
+                if (is_king == false) {
+                    delete_checker(move_direction, 'white', move_lines, parent_id, false);
+                } else {
+                    delete_checker(move_direction, 'white', move_lines, parent_id, true);
+                    captured_checkers.push([move_direction, 'white', move_lines, parent_id]);
                 }
             }
             cells[i].appendChild(new_checker);
@@ -745,10 +788,18 @@ for (let i = 0; i < cells.length; i++) {
                 parent_id_check = +new_checker.parentElement.getAttribute('id');
                 
                 need_capture = 1;
-                check_checker_capture('topleft', 'white', parent_id_check, false);
-                check_checker_capture('topright', 'white', parent_id_check, false);
-                check_checker_capture('bottomleft', 'white', parent_id_check, false);
-                check_checker_capture('bottomright', 'white', parent_id_check, false);
+                if (is_king == false) {
+                    check_checker_capture('topleft', 'white', parent_id_check, false);
+                    check_checker_capture('topright', 'white', parent_id_check, false);
+                    check_checker_capture('bottomleft', 'white', parent_id_check, false);
+                    check_checker_capture('bottomright', 'white', parent_id_check, false);
+                } else {
+                    check_king_capture('topleft', 'white', parent_id_check, false);
+                    check_king_capture('topright', 'white', parent_id_check, false);
+                    check_king_capture('bottomleft', 'white', parent_id_check, false);
+                    check_king_capture('bottomright', 'white', parent_id_check, false);
+                }
+                
 
                 if (need_capture == 2) {
                     need_capture_again = 2;
@@ -757,10 +808,18 @@ for (let i = 0; i < cells.length; i++) {
                 parent_id_check = +new_checker.parentElement.getAttribute('id');
     
                 need_capture = 1;
-                check_checker_capture('topleft', 'black', parent_id_check, false);
-                check_checker_capture('topright', 'black', parent_id_check, false);
-                check_checker_capture('bottomleft', 'black', parent_id_check, false);
-                check_checker_capture('bottomright', 'black', parent_id_check, false);
+                if (is_king == false) {
+                    check_checker_capture('topleft', 'black', parent_id_check, false);
+                    check_checker_capture('topright', 'black', parent_id_check, false);
+                    check_checker_capture('bottomleft', 'black', parent_id_check, false);
+                    check_checker_capture('bottomright', 'black', parent_id_check, false);
+                } else {
+                    check_king_capture('topleft', 'black', parent_id_check, false);
+                    check_king_capture('topright', 'black', parent_id_check, false);
+                    check_king_capture('bottomleft', 'black', parent_id_check, false);
+                    check_king_capture('bottomright', 'black', parent_id_check, false);
+                }
+                
 
                 if (need_capture == 2) {
                     need_capture_again = 2;
@@ -779,6 +838,14 @@ for (let i = 0; i < cells.length; i++) {
             }
 
             if (need_capture_again == 1) {
+                if (is_king == true) {
+                    console.log('Удаление шашек, взятых дамкой');
+                    for (let i = 0; i < captured_checkers.length; i++) {
+                        delete_checker(captured_checkers[i][0], captured_checkers[i][1], captured_checkers[i][2], captured_checkers[i][3], false);
+                    }
+                    captured_checkers = [];
+                    captured_checkers_position = [];
+                }
                 if (turn == 1) {
                     turn = 2;
                 } else {
