@@ -1,0 +1,217 @@
+body *  {
+    /*outline: 1px dotted blueviolet;
+    outline-offset: -1px;*/
+    margin: 0;
+    padding: 0;
+    font-family: Roboto;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+}
+h2 {
+    font-weight: 500;
+}
+
+h3 {
+    font-weight: 300;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.search {
+    width: 34%;
+    height: 28px;
+    border-radius: 8px;
+    background-color: #F5F5F5; 
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 12px;
+}
+
+header {
+    display: flex;
+    gap: 21px;
+    align-items: center;
+    height: 57px;
+    padding-left: 42px;
+    padding-right: 42px;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.logo_button {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.nav_div {
+    height: 100%;
+    display: flex;
+}
+
+.nav_buttons {
+    border: none;
+    font-size: 24px;
+    font-weight: 500;
+    height: 100%;
+    background-color: white;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.nav_buttons:hover {
+    background-color: rgb(235, 235, 235);
+}
+
+main {
+    padding-top: 23px;
+    padding-left: 42px;
+    padding-right: 42px;
+    flex-grow: 1;
+}
+
+.games_list {
+    display: flex;
+    justify-content: flex-start;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/*.game {
+    width: 131px;
+    height: 131px;
+    background-color: #fafafa;
+    border-radius: 10px;
+}*/
+
+.game {
+    width: 160px;
+    height: 160px;
+    background-image: linear-gradient(45deg, #b2bad6, #dce2fa);
+    border-radius: 10px;
+    transition-property: outline;
+    transition-duration: 0.4s;
+    outline: 2px solid #dce2fa;
+    background-position: center;
+}
+
+.game:hover {
+    transition-property: outline;
+    transition-duration: 0.5s;
+    outline: 2px solid rgb(103, 34, 231);
+}
+
+.categories {
+    padding-top: 23px;
+}
+
+.categories_background {
+    height: 30px;
+    margin-top: 15px;
+    border-radius: 15px;
+    padding: 5px;
+    background-image: linear-gradient(45deg, #591abd, #b507b8, #f50c7d);
+    width: fit-content;
+}
+
+.buttons_categories {
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    height: 100%;
+    transition-property: background-color;
+    transition-duration: 0.4s;
+    background-color: #ffffffdf;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.buttons_categories:hover {
+    transition-property: background-color;
+    transition-duration: 0.5s;
+    background-color: #fffffff8;
+}
+
+
+.collection {
+    margin-top: 15px;
+    gap: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.collection_game {
+    width: 300px;
+    height: 170px;
+    background-image: linear-gradient(45deg, #b2bad6, #dce2fa);
+    border-radius: 10px;
+    transition-property: outline;
+    transition-duration: 0.4s;
+    outline: 2px solid #dce2fa;
+    background-position: center;
+}
+
+.collection_game:hover {
+    transition-property: outline;
+    transition-duration: 0.5s;
+    outline: 2px solid rgb(103, 34, 231);
+}
+
+footer {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 42px;
+    padding-right: 42px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    /*background-color: #e8ecfa;*/
+    background-image: linear-gradient(45deg, #e8ecfa, #e8edff);
+}
+
+.for_creators {
+    display: flex;
+    justify-content: space-between;
+    gap: 60px;
+   
+}
+
+.section_creators {
+    display: flex;
+    flex-direction: column;
+}
+
+.section_creators h3 {
+    margin-bottom: 5px;
+}
+
+.mini_logo {
+    display: flex;
+    gap: 5px;
+}
+
+.board {
+    width: 600px;
+    height: 600px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    background-color: black;
+    /* border: 3px solid black;
+    border-collapse: collapse; */
+    gap: 4px;
+}
+
+
+.cell {
+    /* border: 3px solid black; */
+    background-color: white;
+}
