@@ -28,7 +28,7 @@ let cells = document.querySelectorAll('.cell');
 let letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 let cells_names = [];
 
-for (let i = 0; i < 8; i++) {
+for (let i = 8; i > 0; i--) {
     for (let j = 0; j < 8; j++) {
         cells_names.push(`${letters[j]}${i}`);
     }
@@ -71,6 +71,9 @@ for (let i = 0; i < 3; i++) {
         cell_init_mode = 1;
     }
 }
+
+let table = document.querySelector('table');
+let move = 1;
 
 // Ходы. 1 - белые, 2 - черные
 let turn = 1;
@@ -597,6 +600,7 @@ function add_move_cells(parent_id, cell_color) {
     }
     need_capture = 1;
 
+    console.log(can_move);
     // cell_color 1 - белые, 2 - черные
     if (cell_color == 1 && (can_move == 2 && need_capture_again == 2 || need_capture_again == 1)) {
         // Проверка других шашек
@@ -700,6 +704,40 @@ for (let i = 0; i < cells.length; i++) {
                 is_king = true;
             }
 
+            if (turn == 1) {
+                console.log(need_capture_again);
+                if (need_capture_again == 1) {
+                    console.log('Новый ход');
+                    let tr = document.createElement('tr');
+
+                    let table_number = document.createElement('td');
+                    table_number.classList.add('table_number');
+                    table_number.innerHTML = move;
+                    table_number.innerHTML = move;
+
+                    let table_move_white = document.createElement('td');
+                    table_move_white.classList.add('table_move');
+                    table_move_white.classList.add('move_white');
+
+                    table_move_white.innerHTML = cells_names[+parent_id - 1];
+
+                    let table_move_black = document.createElement('td');
+                    table_move_black.classList.add('table_move');
+                    table_move_black.classList.add('move_black');
+
+                    table.appendChild(tr);
+                    tr.appendChild(table_number);
+                    tr.appendChild(table_move_white);
+                    tr.appendChild(table_move_black);
+                }
+            } else {
+                if (need_capture_again == 1) {
+                    let table_move_black = document.querySelectorAll('.move_black');
+                    table_move_black = table_move_black[table_move_black.length - 1];
+                    table_move_black.innerHTML = cells_names[+parent_id - 1];
+                } 
+            }
+
             // Удаление ходящей шашки
             chosen_checker.remove();
             // Добавление новой шашки на месте хода
@@ -714,8 +752,6 @@ for (let i = 0; i < cells.length; i++) {
             let move_direction = get_direction(+parent_id, +cells[i].getAttribute('id'));
             // Определение расстояния между старым и новым положением
             let move_lines = count_lines(move_direction, +parent_id, +cells[i].getAttribute('id'));
-
-            // Добавить в функции проверки ходов проверку списка взятых шашек
 
             // Добавление класса новой шашке и удаление взятой шашки
             if (turn==1) {
@@ -847,8 +883,29 @@ for (let i = 0; i < cells.length; i++) {
                 }
                 if (turn == 1) {
                     turn = 2;
+
+                    let table_move = document.querySelectorAll('.move_white');
+                    console.log(table_move);
+                    table_move = table_move[table_move.length - 1];
+                    if (need_capture == 1) {
+                        table_move.innerHTML += '-';
+                    } else {
+                        table_move.innerHTML += ':';
+                    }
+                    table_move.innerHTML += cells_names[+new_checker.parentElement.getAttribute('id') - 1];
                 } else {
                     turn = 1;
+
+                    let table_move = document.querySelectorAll('.move_black');
+                    console.log(table_move);
+                    table_move = table_move[table_move.length - 1];
+                    if (need_capture == 1) {
+                        table_move.innerHTML += '-';
+                    } else {
+                        table_move.innerHTML += ':';
+                    }
+                    table_move.innerHTML += cells_names[+new_checker.parentElement.getAttribute('id') - 1];
+                    move += 1;
                 }
                 need_capture = 1;
                 can_move = 1;
