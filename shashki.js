@@ -492,7 +492,6 @@ function count_lines(direction, cell_id, new_cell_id) {
 }
 
 function delete_checker(direction, color_check, lines, cell_id, is_king) {
-    // ИСПРАВИТЬ НИЖНИЕ НАПРАВЛЕНИЯ
     let check_cell = '';
 
     let check_selector = '';
@@ -856,6 +855,19 @@ for (let i = 0; i < cells.length; i++) {
                 console.log('ход завершен');
                 // Добавить тут проверку окончания партии
                 // А также запись хода в таблицу
+            } else {
+                console.log('Добавление клеток для повторного взятия', turn, new_checker.parentElement.getAttribute('id'));
+                chosen_checker = new_checker;
+                parent_cell = chosen_checker.parentElement;
+                parent_cell.style.backgroundColor = '#5cb334';
+                parent_id = parent_cell.getAttribute('id'); // id клетки родителя
+
+                if (turn == 1) {
+                    add_move_cells(new_checker.parentElement.getAttribute('id'), 1);
+                } else {
+                    add_move_cells(new_checker.parentElement.getAttribute('id'), 2);
+                }
+                
             }
         }
     })
