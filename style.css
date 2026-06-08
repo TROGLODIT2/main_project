@@ -255,6 +255,10 @@ footer {
 .players {
     height: 30%;
     background-image: linear-gradient(45deg, #e8ecfa, #e8edff);
+    /* display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around; */
 }
 
 .moves {

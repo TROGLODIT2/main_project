@@ -95,6 +95,8 @@ let need_capture_again_king = false;
 // 1 - нельзя идти, 2 - можно идти
 let can_move = 1;
 
+let have_move = false;
+
 // Список параметров для удаления шашек взятых дамкой
 let captured_checkers = [];
 
@@ -420,6 +422,8 @@ function check_king_capture(direction, color_checker, cell_id, add_move) {
                             if (need_capture == 1) {
                                 // Добавление ходов если не нужно бить
                                 add_move_checker(direction, j, cell_id);
+                            } else {
+                                have_move = true;
                             }
                         }
                     }
@@ -459,11 +463,15 @@ function check_king_capture(direction, color_checker, cell_id, add_move) {
     }
 }
 
-function check_checker_moves(direction, cell_id) {
+function check_checker_moves(direction, cell_id, add_move) {
     if (check_checker(direction, 1, 'white', cell_id) == false && check_checker(direction, 1, 'black', cell_id) == false) {
         // Проверка на левую крайнюю клетку
         if (check_edge_cell(direction, 0, cell_id) == false) {
-            add_move_checker(direction, 1, cell_id)
+            if (add_move == true) {
+                add_move_checker(direction, 1, cell_id);
+            } else {
+                have_move = true;
+            }
         }
     }
 }
@@ -613,8 +621,8 @@ function add_move_cells(parent_id, cell_color) {
             check_checker_capture('bottomright', 'white', parent_id, true);
             
             if (need_capture == 1) {
-                check_checker_moves('topleft', parent_id);
-                check_checker_moves('topright', parent_id);
+                check_checker_moves('topleft', parent_id, true);
+                check_checker_moves('topright', parent_id, true);
             }
         } else {
             check_king_capture('topleft', 'white', parent_id, true);
@@ -635,8 +643,8 @@ function add_move_cells(parent_id, cell_color) {
             check_checker_capture('bottomright', 'black', parent_id, true);
 
             if (need_capture == 1) {
-                check_checker_moves('bottomleft', parent_id);
-                check_checker_moves('bottomright', parent_id);
+                check_checker_moves('bottomleft', parent_id, true);
+                check_checker_moves('bottomright', parent_id, true);
             }
         } else {
             check_king_capture('topleft', 'black', parent_id, true);
@@ -644,6 +652,36 @@ function add_move_cells(parent_id, cell_color) {
             check_king_capture('bottomleft', 'black', parent_id, true);
             check_king_capture('bottomright', 'black', parent_id, true);
         }
+    }
+}
+
+function check_can_move(team_color) {
+    need_capture = 1;
+    have_move = false;
+
+    let team_checkers = '';
+    if (team_color == 'white') {
+        team_checkers = document.querySelectorAll('.checker_white');
+        check_need_capture(1);
+    } else {
+        team_checkers = document.querySelectorAll('.checker_black');
+        check_need_capture(2);
+    }
+
+    for (let j = 0; j < team_checkers.length; j++) {
+        if (team_color == 'white') {
+            check_checker_moves('topleft', +team_checkers[j].parentElement.getAttribute('id'), false);
+            check_checker_moves('topright', +team_checkers[j].parentElement.getAttribute('id'), false);
+        } else {
+            check_checker_moves('bottomleft', +team_checkers[j].parentElement.getAttribute('id'), false);
+            check_checker_moves('bottomright', +team_checkers[j].parentElement.getAttribute('id'), false);
+        }
+    }
+
+    if (need_capture == 2 || have_move == true) {
+        return true
+    } else {
+        return false
     }
 }
 
@@ -819,6 +857,19 @@ for (let i = 0; i < cells.length; i++) {
             // Проверка необходимости бить
             need_capture_again = 1;
 
+            // Проверка на превращение в дамку
+            if (turn == 1) {
+                if (+new_checker.parentElement.getAttribute('id') < 9) {
+                    new_checker.classList.add('king');
+                    is_king = true;
+                }
+            } else {
+                if (+new_checker.parentElement.getAttribute('id') > 56) {
+                    new_checker.classList.add('king');
+                    is_king = true;
+                }
+            }
+
             if (turn == 1 && need_capture == 2) {
                 parent_id_check = +new_checker.parentElement.getAttribute('id');
                 
@@ -861,17 +912,6 @@ for (let i = 0; i < cells.length; i++) {
                 }
             }
 
-            // Проверка на превращение в дамку
-            if (turn == 1) {
-                if (+new_checker.parentElement.getAttribute('id') < 9) {
-                    new_checker.classList.add('king');
-                }
-            } else {
-                if (+new_checker.parentElement.getAttribute('id') > 56) {
-                    new_checker.classList.add('king');
-                }
-            }
-
             if (need_capture_again == 1) {
                 if (is_king == true) {
                     console.log('Удаление шашек, взятых дамкой');
@@ -884,8 +924,8 @@ for (let i = 0; i < cells.length; i++) {
                 if (turn == 1) {
                     turn = 2;
 
+                    // Запись хода в таблицу
                     let table_move = document.querySelectorAll('.move_white');
-                    console.log(table_move);
                     table_move = table_move[table_move.length - 1];
                     if (need_capture == 1) {
                         table_move.innerHTML += '-';
@@ -893,11 +933,12 @@ for (let i = 0; i < cells.length; i++) {
                         table_move.innerHTML += ':';
                     }
                     table_move.innerHTML += cells_names[+new_checker.parentElement.getAttribute('id') - 1];
+                    //console.log(check_can_move('black'));
                 } else {
                     turn = 1;
 
+                    // Запись хода в таблицу
                     let table_move = document.querySelectorAll('.move_black');
-                    console.log(table_move);
                     table_move = table_move[table_move.length - 1];
                     if (need_capture == 1) {
                         table_move.innerHTML += '-';
@@ -905,13 +946,15 @@ for (let i = 0; i < cells.length; i++) {
                         table_move.innerHTML += ':';
                     }
                     table_move.innerHTML += cells_names[+new_checker.parentElement.getAttribute('id') - 1];
+                    //console.log(check_can_move('white'));
                     move += 1;
                 }
                 need_capture = 1;
                 can_move = 1;
                 console.log('ход завершен');
                 // Добавить тут проверку окончания партии
-                // А также запись хода в таблицу
+
+
             } else {
                 console.log('Добавление клеток для повторного взятия', turn, new_checker.parentElement.getAttribute('id'));
                 chosen_checker = new_checker;
