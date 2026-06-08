@@ -72,6 +72,10 @@ for (let i = 0; i < 3; i++) {
     }
 }
 
+// Селекторы всплывающего окна победы
+let result_window = document.querySelector('.result_window');
+let result = document.querySelector('.result');
+
 let table = document.querySelector('table');
 let move = 1;
 
@@ -102,12 +106,6 @@ let captured_checkers = [];
 
 // Позиции шашек взятых дамкой
 let captured_checkers_position = [];
-
-// Неактуально удалить позже
-let upper_left_cell = '';
-let upper_right_cell = '';
-let lower_left_cell = '';
-let lower_right_cell = '';
 
 function get_position(direction, lines, cell_id) {
     let check_cell = '';
@@ -933,7 +931,13 @@ for (let i = 0; i < cells.length; i++) {
                         table_move.innerHTML += ':';
                     }
                     table_move.innerHTML += cells_names[+new_checker.parentElement.getAttribute('id') - 1];
-                    //console.log(check_can_move('black'));
+
+                    // Проверка на победу в партии
+                    if (check_can_move('black') == false) {
+                        console.log('Белые победили');
+                        result_window.style.display = 'flex';
+                        result.innerHTML = 'Белые победили';
+                    }
                 } else {
                     turn = 1;
 
@@ -946,15 +950,18 @@ for (let i = 0; i < cells.length; i++) {
                         table_move.innerHTML += ':';
                     }
                     table_move.innerHTML += cells_names[+new_checker.parentElement.getAttribute('id') - 1];
-                    //console.log(check_can_move('white'));
+
+                    // Проверка на победу в партии
+                    if (check_can_move('white') == false) {
+                        console.log('Черные победили');
+                        result_window.style.display = 'flex';
+                        result.innerHTML = 'Чёрные победили';
+                    }
                     move += 1;
                 }
                 need_capture = 1;
                 can_move = 1;
                 console.log('ход завершен');
-                // Добавить тут проверку окончания партии
-
-
             } else {
                 console.log('Добавление клеток для повторного взятия', turn, new_checker.parentElement.getAttribute('id'));
                 chosen_checker = new_checker;
