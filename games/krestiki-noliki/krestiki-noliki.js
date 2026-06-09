@@ -17,11 +17,10 @@ let move = 1;
 
 
 function getColor(index) {
-    console.log(cells[index].style.backgroundImage == 'url(https://troglodit2.github.io/main_project/src/picture/krest.png)')
-    if (cells[index].style.backgroundImage == 'url(https://troglodit2.github.io/main_project/src/picture/krest.png)') {
+    if (cells[index].style.backgroundImage == 'url("https://troglodit2.github.io/main_project/src/picture/krest.png")') {
         return 'krest';
     }
-    if (cells[index].style.backgroundImage == 'url(https://troglodit2.github.io/main_project/src/picture/nolik.png)') {
+    if (cells[index].style.backgroundImage == 'url("https://troglodit2.github.io/main_project/src/picture/nolik.png")') {
         return 'nolik'; 
     }
     return 'null';
@@ -33,13 +32,13 @@ for (let i = 0; i < cells.length; i++) {
     cells[i].addEventListener('click', function () {
         if (cells[i].style.backgroundImage == '') {
             if (move == 1) {
-                cells[i].style.backgroundImage = 'url(https://troglodit2.github.io/main_project/src/picture/krest.png)';
+                cells[i].style.backgroundImage = 'url("https://troglodit2.github.io/main_project/src/picture/krest.png")';
                 cells[i].style.backgroundPosition = 'center';
                 cells[i].style.backgroundRepeat = 'no-repeat';
                 cells[i].style.backgroundSize = 'contain';
                 move = 2
             } else {
-                cells[i].style.backgroundImage = 'url(https://troglodit2.github.io/main_project/src/picture/nolik.png)';
+                cells[i].style.backgroundImage = 'url("https://troglodit2.github.io/main_project/src/picture/nolik.png")';
                 cells[i].style.backgroundPosition = 'center';
                 cells[i].style.backgroundRepeat = 'no-repeat';
                 cells[i].style.backgroundSize = 'contain';
