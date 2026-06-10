@@ -1,0 +1,83 @@
+/* Стили для навигационной панели */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #333;
+    color: white;
+    position: relative;
+}
+    
+/* Стили для кнопки-гамбургера */
+.hamburger-button {
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+/* Стили для линий гамбургера */
+.hamburger-line {
+    width: 100%;
+    height: 3px;
+    background-color: white;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+/* Стили для меню */
+.menu-items {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    padding: 1rem 0;
+    list-style-type: none;
+    margin: 0;
+    display: none;
+}
+
+.menu-items li {
+    padding: 0.5rem 1rem;
+}
+
+.menu-items li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+}
+
+/* Показать меню при активации */
+.menu-active {
+    display: block;
+}
+/* Анимация превращения в крестик */
+.hamburger-button:active .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger-button:active .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-button:active .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* Стили для открытого меню */
+.menu-items:active {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

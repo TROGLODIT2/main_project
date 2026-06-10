@@ -302,7 +302,7 @@ footer {
     width: 80%;
     height: 80%;
     border-radius: 50%;
-    outline: 3px solid rgb(204, 204, 204)
+    outline: 3px solid rgb(204, 204, 204);
 }
 
 .checker_black {
@@ -310,7 +310,7 @@ footer {
     width: 80%;
     height: 80%;
     border-radius: 50%;
-    outline: 3px solid rgb(95, 95, 95)
+    outline: 3px solid rgb(95, 95, 95);
 }
 
 .move_cell {
@@ -318,7 +318,7 @@ footer {
 }
 
 .king {
-    outline: 4px solid rgb(255, 251, 39)
+    outline: 3px solid rgb(255, 251, 39)
 }
 
 .result_window {
@@ -334,4 +334,43 @@ footer {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+@media (max-width: 768px) {
+    footer {
+        flex-direction: column;
+        gap: 25px;
+    }
+    .for_creators {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .shashki_game {
+        flex-direction: column;
+    }
+    .board {
+        width: 90vw;
+    }
+
+    .info_game {
+        width: 90vw;
+        gap: 10vw;
+        height: auto;
+    }
+    .shashki_game {
+        margin: 10vw;
+    }
+    .main {
+        padding: 10vw;
+        flex-grow: 1s;
+    }
+    .checker_white {
+        outline: 2px solid rgb(204, 204, 204)
+    }
+    .checker_black {
+        outline: 2px solid rgb(95, 95, 95);
+    }
+    .king {
+        outline: 2px solid rgb(255, 251, 39)
+    }
 }
