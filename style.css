@@ -232,12 +232,13 @@ footer {
     margin-bottom: 15px;
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 60px;
 }
 
 .board {
     width: 600px;
-    height: 600px;
+    aspect-ratio: 1/1;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(8, 1fr);
@@ -298,17 +299,17 @@ footer {
 
 .checker_white {
     background-color: white;
-    width: 60px;
-    height: 60px;
-    border-radius: 30px;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
     outline: 3px solid rgb(204, 204, 204)
 }
 
 .checker_black {
     background-color: rgb(59, 59, 59);
-    width: 60px;
-    height: 60px;
-    border-radius: 30px;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
     outline: 3px solid rgb(95, 95, 95)
 }
 

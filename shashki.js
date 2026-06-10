@@ -392,6 +392,7 @@ function check_diagonal_captures(direction, color_checker, lines, cell_id, add_m
 }
 
 function check_king_capture(direction, color_checker, cell_id, add_move) {
+    console.log('Проверка дамки');
     let color_check = '';
     if (color_checker == 'white') {
         color_check = 'black';
@@ -416,13 +417,14 @@ function check_king_capture(direction, color_checker, cell_id, add_move) {
                     if (check_checker(direction, j, color_check, cell_id) == true) {
                         is_checker = true;
                     } else {
+                        console.log('Есть ходы');
                         if (add_move == true) {
                             if (need_capture == 1) {
                                 // Добавление ходов если не нужно бить
                                 add_move_checker(direction, j, cell_id);
-                            } else {
-                                have_move = true;
                             }
+                        } else {
+                            have_move = true;
                         }
                     }
                 } else if (is_checker == true && free_cell_after == false) {
@@ -943,6 +945,7 @@ for (let i = 0; i < cells.length; i++) {
                 }
                 if (turn == 1) {
                     turn = 2;
+                    console.log('Проверка');
 
                     // Проверка на победу в партии
                     if (check_can_move('black') == false) {
@@ -952,6 +955,7 @@ for (let i = 0; i < cells.length; i++) {
                     }
                 } else {
                     turn = 1;
+                    console.log('Проверка');
 
                     // Проверка на победу в партии
                     if (check_can_move('white') == false) {
