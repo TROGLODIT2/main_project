@@ -36,6 +36,10 @@ a {
     padding-left: 12px;
 }
 
+header {
+    width: 100vw;
+}
+
 .main_navbar {
     display: flex;
     gap: 21px;
@@ -49,7 +53,6 @@ a {
 .mobile_navbar {
     display: none;
     padding: 0 5vw;
-    width: 100vw;
     align-items: center;
     justify-content: space-between;
     position: relative;
@@ -419,5 +422,8 @@ footer {
     }
     .king {
         outline: 2px solid rgb(255, 251, 39)
+    }
+    .moves {
+        max-height: 300px;
     }
 }

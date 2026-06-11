@@ -434,9 +434,9 @@ function check_king_capture(direction, color_checker, cell_id, add_move) {
                             if (need_capture == 1) {
                                 // Добавление ходов если не нужно бить
                                 add_move_checker(direction, j, cell_id);
-                            } else {
-                                have_move = true;
                             }
+                        } else {
+                            have_move = true;
                         }
                     }
                 } else if (is_checker == true && free_cell_after == false) {
@@ -597,6 +597,23 @@ function check_need_capture(cell_color) {
             }
         }
     }
+}
+
+function add_to_table(team_color, new_checker) {
+    // Запись хода в таблицу
+    let table_move = '';
+    if (team_color == 'white') {
+        table_move = document.querySelectorAll('.move_white');
+    } else {
+        table_move = document.querySelectorAll('.move_black');
+    }
+    table_move = table_move[table_move.length - 1];
+    if (need_capture == 1) {
+        table_move.innerHTML += '-';
+    } else {
+        table_move.innerHTML += ':';
+    }
+    table_move.innerHTML += cells_names[+new_checker.parentElement.getAttribute('id') - 1];
 }
 
 // Добавляет метки возможного хода на поле
@@ -881,6 +898,11 @@ for (let i = 0; i < cells.length; i++) {
                     is_king = true;
                 }
             }
+            if (turn == 1) {
+                add_to_table('white', new_checker);
+            } else {
+                add_to_table('black', new_checker);
+            }
 
             if (turn == 1 && need_capture == 2) {
                 parent_id_check = +new_checker.parentElement.getAttribute('id');
@@ -936,16 +958,6 @@ for (let i = 0; i < cells.length; i++) {
                 if (turn == 1) {
                     turn = 2;
 
-                    // Запись хода в таблицу
-                    let table_move = document.querySelectorAll('.move_white');
-                    table_move = table_move[table_move.length - 1];
-                    if (need_capture == 1) {
-                        table_move.innerHTML += '-';
-                    } else {
-                        table_move.innerHTML += ':';
-                    }
-                    table_move.innerHTML += cells_names[+new_checker.parentElement.getAttribute('id') - 1];
-
                     // Проверка на победу в партии
                     if (check_can_move('black') == false) {
                         console.log('Белые победили');
@@ -954,16 +966,6 @@ for (let i = 0; i < cells.length; i++) {
                     }
                 } else {
                     turn = 1;
-
-                    // Запись хода в таблицу
-                    let table_move = document.querySelectorAll('.move_black');
-                    table_move = table_move[table_move.length - 1];
-                    if (need_capture == 1) {
-                        table_move.innerHTML += '-';
-                    } else {
-                        table_move.innerHTML += ':';
-                    }
-                    table_move.innerHTML += cells_names[+new_checker.parentElement.getAttribute('id') - 1];
 
                     // Проверка на победу в партии
                     if (check_can_move('white') == false) {
