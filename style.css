@@ -424,6 +424,6 @@ footer {
         outline: 2px solid rgb(255, 251, 39)
     }
     .moves {
-        height: 300px;
+        max-height: 300px;
     }
 }
