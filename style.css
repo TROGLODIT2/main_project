@@ -36,7 +36,7 @@ a {
     padding-left: 12px;
 }
 
-header {
+.main_navbar {
     display: flex;
     gap: 21px;
     align-items: center;
@@ -44,6 +44,44 @@ header {
     padding-left: 42px;
     padding-right: 42px;
     border-bottom: 1px solid #e8e8e8;
+}
+
+.mobile_navbar {
+    display: none;
+    padding: 0 5vw;
+    width: 100vw;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.open_menu {
+    height: 44px;
+    width: 44px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.open_menu_line {
+    width: 100%;
+    height: 3px;
+    background-color: black;
+}
+
+.menu_items {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    list-style-type: none;
+    background-color: white;
+    width: 100%;
+    padding: 1em 5vw;
+    display: none;
+}
+
+.menu_items li {
+    margin: 5px 0;
 }
 
 .logo_button {
@@ -120,6 +158,8 @@ main {
     padding: 5px;
     background-image: linear-gradient(45deg, #591abd, #b507b8, #f50c7d);
     width: fit-content;
+    display: flex;
+    gap: 5px;
 }
 
 .buttons_categories {
@@ -337,9 +377,16 @@ footer {
 }
 
 @media (max-width: 768px) {
+    .main_navbar {
+        display: none;
+    }
+    .mobile_navbar {
+        display: flex;
+    }
     footer {
         flex-direction: column;
         gap: 25px;
+        padding: 15px 5vw;
     }
     .for_creators {
         flex-direction: column;
@@ -360,8 +407,8 @@ footer {
     .shashki_game {
         margin: 10vw;
     }
-    .main {
-        padding: 10vw;
+    main {
+        padding: 15px 5vw;
         flex-grow: 1s;
     }
     .checker_white {
