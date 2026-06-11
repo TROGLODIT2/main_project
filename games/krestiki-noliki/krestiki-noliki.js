@@ -66,6 +66,7 @@ for (let i = 0; i < cells.length; i++) {
                 console.log('крестики победили');
                 win = 1;
                 win_text.style.display = 'block';
+                win_text.innerHTML = '<h4 class = "win_text_h4">Крестики победили!</h4>';
             }
             if (getColor(6) == 'krest' && getColor(7) == 'krest' && getColor(8) == 'krest') {
                 let win_line = document.getElementById('line-3');
@@ -73,6 +74,7 @@ for (let i = 0; i < cells.length; i++) {
                 console.log('крестики победили');
                 win = 1;
                 win_text.style.display = 'block';
+                win_text.innerHTML = '<h4 class = "win_text_h4">Крестики победили!</h4>';
             }
             if (getColor(0) == 'krest' && getColor(3) == 'krest' && getColor(6) == 'krest') {
                 let win_line = document.getElementById('line-4');
@@ -80,6 +82,7 @@ for (let i = 0; i < cells.length; i++) {
                 console.log('крестики победили');
                 win = 1;
                 win_text.style.display = 'block';
+                win_text.innerHTML = '<h4 class = "win_text_h4">Крестики победили!</h4>';
             }
             if (getColor(1) == 'krest' && getColor(4) == 'krest' && getColor(7) == 'krest') {
                 let win_line = document.getElementById('line-5');
@@ -87,6 +90,7 @@ for (let i = 0; i < cells.length; i++) {
                 console.log('крестики победили');
                 win = 1;
                 win_text.style.display = 'block';
+                win_text.innerHTML = '<h4 class = "win_text_h4">Крестики победили!</h4>';
             }
             if (getColor(2) == 'krest' && getColor(5) == 'krest' && getColor(8) == 'krest') {
                 let win_line = document.getElementById('line-6');
@@ -94,6 +98,7 @@ for (let i = 0; i < cells.length; i++) {
                 console.log('крестики победили');
                 win = 1;
                 win_text.style.display = 'block';
+                win_text.innerHTML = '<h4 class = "win_text_h4">Крестики победили!</h4>';
             }
             if (getColor(0) == 'krest' && getColor(4) == 'krest' && getColor(8) == 'krest') {
                 let win_line = document.getElementById('line-7');
@@ -101,6 +106,7 @@ for (let i = 0; i < cells.length; i++) {
                 console.log('крестики победили');
                 win = 1;
                 win_text.style.display = 'block';
+                win_text.innerHTML = '<h4 class = "win_text_h4">Крестики победили!</h4>';
             }
             if (getColor(2) == 'krest' && getColor(4) == 'krest' && getColor(6) == 'krest') {
                 let win_line = document.getElementById('line-8');
@@ -108,6 +114,7 @@ for (let i = 0; i < cells.length; i++) {
                 console.log('крестики победили');
                 win = 1;
                 win_text.style.display = 'block';
+                win_text.innerHTML = '<h4 class = "win_text_h4">Крестики победили!</h4>';
             }
             
             //Проверка победы ноликов
@@ -117,6 +124,7 @@ for (let i = 0; i < cells.length; i++) {
                 console.log('нолики победили');
                 win = 1;
                 win_text.style.display = 'block';
+                win_text.innerHTML = '<h4 class = "win_text_h4">Нолики победили!</h4>';
             }
             if (getColor(3) == 'nolik' && getColor(4) == 'nolik' && getColor(5) == 'nolik') {
                 let win_line = document.getElementById('line-2');
@@ -124,6 +132,7 @@ for (let i = 0; i < cells.length; i++) {
                 console.log('нолики победили');
                 win = 1;
                 win_text.style.display = 'block';
+                win_text.innerHTML = '<h4 class = "win_text_h4">Нолики победили!</h4>';
             }
             if (getColor(6) == 'nolik' && getColor(7) == 'nolik' && getColor(8) == 'nolik') {
                 let win_line = document.getElementById('line-3');
@@ -131,6 +140,7 @@ for (let i = 0; i < cells.length; i++) {
                 console.log('нолики победили');
                 win = 1;
                 win_text.style.display = 'block';
+                win_text.innerHTML = '<h4 class = "win_text_h4">Нолики победили!</h4>';
             }
             if (getColor(0) == 'nolik' && getColor(3) == 'nolik' && getColor(6) == 'nolik') {
                 let win_line = document.getElementById('line-4');
@@ -138,6 +148,7 @@ for (let i = 0; i < cells.length; i++) {
                 console.log('нолики победили');
                 win = 1;
                 win_text.style.display = 'block';
+                win_text.innerHTML = '<h4 class = "win_text_h4">Нолики победили!</h4>';
             }
             if (getColor(1) == 'nolik' && getColor(4) == 'nolik' && getColor(7) == 'nolik') {
                 let win_line = document.getElementById('line-5');
@@ -145,6 +156,7 @@ for (let i = 0; i < cells.length; i++) {
                 console.log('нолики победили');
                 win = 1;
                 win_text.style.display = 'block';
+                win_text.innerHTML = '<h4 class = "win_text_h4">Нолики победили!</h4>';
             }
             if (getColor(2) == 'nolik' && getColor(5) == 'nolik' && getColor(8) == 'nolik') {
                 let win_line = document.getElementById('line-6');
@@ -152,6 +164,7 @@ for (let i = 0; i < cells.length; i++) {
                 console.log('нолики победили');
                 win = 1;
                 win_text.style.display = 'block';
+                win_text.innerHTML = '<h4 class = "win_text_h4">Нолики победили!</h4>';
             }
             if (getColor(0) == 'nolik' && getColor(4) == 'nolik' && getColor(8) == 'nolik') {
                 let win_line = document.getElementById('line-7');
@@ -159,6 +172,7 @@ for (let i = 0; i < cells.length; i++) {
                 console.log('нолики победили');
                 win = 1;
                 win_text.style.display = 'block';
+                win_text.innerHTML = '<h4 class = "win_text_h4">Нолики победили!</h4>';
             }
             if (getColor(2) == 'nolik' && getColor(4) == 'nolik' && getColor(6) == 'nolik') {
                 let win_line = document.getElementById('line-8');
@@ -166,6 +180,7 @@ for (let i = 0; i < cells.length; i++) {
                 console.log('нолики победили');
                 win = 1;
                 win_text.style.display = 'block';
+                win_text.innerHTML = '<h4 class = "win_text_h4">Нолики победили!</h4>';
             }
         }
     })
