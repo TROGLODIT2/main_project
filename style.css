@@ -426,4 +426,15 @@ footer {
     .moves {
         max-height: 300px;
     }
+
+    .game {
+        outline-offset: -2px;
+    }
+    .categories_background {
+        width: 100%;
+        overflow-x: auto;
+    }
+    .games_list {
+        overflow-x: auto;
+    }
 }
