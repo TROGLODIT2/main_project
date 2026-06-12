@@ -28,7 +28,16 @@ function getColor(index) {
     return 'null';
 }
 
+class Cell {
+    constructor(id, backround, size) {
+        this.id = id;
+        this.backround = backround;
+        this.size = size;
+    }
+    GetNeighbors() {
 
+    }
+}
 
 //Цикл игры
 for (let i = 0; i < cells.length; i++) {
