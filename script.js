@@ -1,5 +1,5 @@
 let links_divs = document.querySelectorAll('.game');
-let game_bakground = ['src/picture/shashki.jpg', 'src/picture/krestiki-noliki.png'];
+let game_bakground = ['src/picture/shashki.jpg', 'src/picture/krestiki-noliki.png', ''];
 
 
 for (let i = 0; i < game_bakground.length; i ++) {
@@ -9,7 +9,7 @@ for (let i = 0; i < game_bakground.length; i ++) {
 }
 
 let links = document.querySelectorAll('.game-link');
-let links_list = ['shashki_game.html', 'games/krestiki-noliki/krestiki-noliki.html'];
+let links_list = ['shashki_game.html', 'games/krestiki-noliki/krestiki-noliki.html', 'memory_game.html'];
 
 for (let i = 0; i < game_bakground.length; i ++) {
     links[i].href = `${links_list[i]}`;
