@@ -113,9 +113,7 @@ header {
 }
 
 main {
-    padding-top: 23px;
-    padding-left: 42px;
-    padding-right: 42px;
+    padding: 23px 42px;
     flex-grow: 1;
 }
 
@@ -377,6 +375,17 @@ footer {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+.memo {
+    background-color: azure;
+    height: 100%;
+}
+
+.memo_game {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: aqua;
 }
 
 @media (max-width: 768px) {

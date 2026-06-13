@@ -1,12 +1,4 @@
 // Открытие бургер меню
-let links = document.querySelectorAll('.game-link');
-let links_list = ['shashki_game.html', 'games/krestiki-noliki/krestiki-noliki.html'];
-
-for (let i = 0; i < game_bakground.length; i ++) {
-    links[i].href = `${links_list[i]}`;
-    links[i].style.display = 'block';
-}
-
 let open_menu = false;
 let open_menu_button = document.querySelector('.open_menu');
 
