@@ -375,6 +375,7 @@ footer {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    z-index: 21;
 }
 
 .memo {
@@ -392,7 +393,7 @@ footer {
 }
 
 .memo_cards {
-    width: 50%;
+    aspect-ratio: 1.2/1;
     height: 100%;
     border-radius: 20px;
     display: grid;
@@ -467,27 +468,47 @@ footer {
     width: 100%;
     height: 80%;
     border-radius: 20px;
+    box-sizing: border-box;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+}
+
+.turn_first {
+    font-size: 24px;
+}
+
+.turn_second {
+    font-size: 24px;
+    display: none;
 }
 
 @media (max-width: 768px) {
     .main_navbar {
         display: none;
     }
+
     .mobile_navbar {
         display: flex;
     }
+
     footer {
         flex-direction: column;
         gap: 25px;
         padding: 15px 5vw;
     }
+
     .for_creators {
         flex-direction: column;
         gap: 20px;
     }
+
     .shashki_game {
         flex-direction: column;
     }
+
     .board {
         width: 90vw;
     }
@@ -497,22 +518,28 @@ footer {
         gap: 10vw;
         height: auto;
     }
+
     .shashki_game {
         margin: 10vw;
     }
+
     main {
         padding: 15px 5vw;
         flex-grow: 1s;
     }
+
     .checker_white {
         outline: 2px solid rgb(204, 204, 204)
     }
+
     .checker_black {
         outline: 2px solid rgb(95, 95, 95);
     }
+
     .king {
         outline: 2px solid rgb(255, 251, 39)
     }
+
     .moves {
         max-height: 300px;
     }
@@ -520,11 +547,43 @@ footer {
     .game {
         outline-offset: -2px;
     }
+
     .categories_background {
         width: 100%;
         overflow-x: auto;
     }
+
     .games_list {
         overflow-x: auto;
+    }
+
+    .memo_game {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .memo_player {
+        width: 100%;
+        height: 180px;
+    }
+
+    .memo_cards {
+        width: 100%;
+        height: auto;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(5, 1fr);
+        aspect-ratio: 1/1;
+    }
+
+    .taken_cards {
+        height: 90px;
+    }
+
+    .card_front {
+        border-radius: 10px;
+    }
+
+    .card_behind {
+        border-radius: 10px;
     }
 }
