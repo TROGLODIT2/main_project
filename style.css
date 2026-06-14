@@ -376,16 +376,97 @@ footer {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
 .memo {
-    background-color: azure;
     height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .memo_game {
+    margin-top: 15px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    background-color: aqua;
+    flex-grow: 1;
+}
+
+.memo_cards {
+    width: 50%;
+    height: 100%;
+    border-radius: 20px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 10px;
+    box-sizing: border-box;
+    /* padding: 20px; */
+    /* box-shadow: 0px 0px 40px 0px rgb(220, 220, 255);
+    outline: 2px solid rgb(220, 220, 255);
+    outline-offset: -2px; */
+}
+
+.memo_card {
+    border-radius: 20px;
+    position: relative;
+    perspective: 400px;
+}
+
+.card_front {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    position: absolute;
+    background-color: mediumpurple;
+    backface-visibility: hidden;
+    transition-property: transform;
+    transition-duration: 0.8s;
+    transition-timing-function: ease;
+    transform: rotateY(0deg);
+}
+
+.card_behind {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    position: absolute;
+    backface-visibility: hidden;
+    pointer-events: none;
+    transition-property: transform;
+    transition-timing-function: ease;
+    transition-duration: 0.8s;
+    transform: rotateY(180deg);
+}
+
+/* .memo_card:hover .card_front {
+    transform: rotateY(180deg);
+}
+
+.memo_card:hover .card_behind {
+    transform: rotateY(360deg);
+} */
+
+
+.memo_player {
+    width: 20%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border-radius: 20px;
+    box-sizing: border-box;
+    outline: 2px solid rgb(220, 220, 255);
+    outline-offset: -2px;
+    /* box-shadow: 0px 0px 40px 0px rgb(220, 220, 255); */
+}
+
+.taken_cards {
+    background-color: #e8edff;
+    width: 100%;
+    height: 80%;
+    border-radius: 20px;
 }
 
 @media (max-width: 768px) {
