@@ -489,11 +489,11 @@ footer {
     margin-top: 15px;
 }
 
-.news {
+.news_text {
     font-size: 20px;
 }
 
-.news span {
+.news_text span {
     color: grey;
 }
 
