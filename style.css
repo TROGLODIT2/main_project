@@ -485,6 +485,18 @@ footer {
     display: none;
 }
 
+.news_list {
+    margin-top: 15px;
+}
+
+.news {
+    font-size: 20px;
+}
+
+.news span {
+    color: grey;
+}
+
 @media (max-width: 768px) {
     .main_navbar {
         display: none;
