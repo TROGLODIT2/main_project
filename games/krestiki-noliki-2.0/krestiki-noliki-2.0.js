@@ -1,5 +1,5 @@
 // Тут добавляются клетки доски в грид
-let board = document.querySelector('.board');
+let board = document.querySelector('.small_board');
 
 for (let i = 1; i < 10; i++) {
     let cell = document.createElement('div');
@@ -44,7 +44,8 @@ class WinChecker {
     }
     //Определение игрока
     checkWin(player) {
-        let playerType = player === 'krest' ? 'Крестики' : 'Нолики';
+        let playerType = player === 'krest' ? 'krest' : 'nolik';
+        
         
         for (let line of this.winLines) {
             if (this.checkLine(line.cells, player)) {
@@ -71,11 +72,19 @@ class WinChecker {
         console.log(`${playerType.toLowerCase()} победили`);
         win = 1;
         this.winTextElement.style.display = 'block';
-        this.winTextElement.innerHTML = `<h4 class="win_text_h4">${playerType} победили!</h4>`;
+        // this.winTextElement.style.backgroundImage = `url("https://troglodit2.github.io/main_project/src/${playerType.toLowerCase()}.png")`;
+        this.winTextElement.style.backgroundImage = `url("https://troglodit2.github.io/main_project/src/picture/${playerType.toLowerCase()}.png")`;
     }
 }
 
 let winChecker = new WinChecker(win_text);
+
+class Cell {
+    constructor(id, backround) {
+        this.id = id;
+        this.backround = backround;
+    }
+}
 
 //Цикл игры
 for (let i = 0; i < cells.length; i++) {
@@ -102,6 +111,7 @@ for (let i = 0; i < cells.length; i++) {
             if (!winChecker.checkWin('krest')) {
                 winChecker.checkWin('nolik');
             }
+
         }
     })
     

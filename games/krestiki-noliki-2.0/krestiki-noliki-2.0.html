@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rublocks игры: Крестики-нолики</title>
-    <link rel="stylesheet" href="krestiki-noliki.css">
+    <link rel="stylesheet" href="krestiki-noliki-2.0.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <nav class="main_navbar">
-            <a class="logo_button" href="https://troglodit2.github.io/main_project/index.html">
+            <a class="logo_button" href="index.html">
                 <img src="https://troglodit2.github.io/main_project/src/picture/Logo.png" alt="Логотип">
                 <h2>Rublocks игры</h2>
             </a>
@@ -24,7 +24,7 @@
             </div>
         </nav>
         <nav class="mobile_navbar">
-            <a class="logo_button" href="https://troglodit2.github.io/main_project/index.html">
+            <a class="logo_button" href="index.html">
                 <img src="https://troglodit2.github.io/main_project/src/picture/Logo.png" alt="Логотип">
                 <h2>Rublocks игры</h2>
             </a>
@@ -47,16 +47,19 @@
         </nav>
     </header>
     <main>
-        <div class="board">
-            <div class="win-line" id="line-1"></div>
-            <div class="win-line" id="line-2"></div>
-            <div class="win-line" id="line-3"></div>
-            <div class="win-line" id="line-4"></div>
-            <div class="win-line" id="line-5"></div>
-            <div class="win-line" id="line-6"></div>
-            <div class="win-line" id="line-7"></div>
-            <div class="win-line" id="line-8"></div>
-            <div class="win_text"></div>
+        <div class=" board big_board">
+            <div class="board small_board" id="board-1">
+                <div class="win-line" id="line-1"></div>
+                <div class="win-line" id="line-2"></div>
+                <div class="win-line" id="line-3"></div>
+                <div class="win-line" id="line-4"></div>
+                <div class="win-line" id="line-5"></div>
+                <div class="win-line" id="line-6"></div>
+                <div class="win-line" id="line-7"></div>
+                <div class="win-line" id="line-8"></div>
+                <div class="win_text"></div>
+            </div>
+            
         </div>
     </main>
     <footer>
@@ -84,6 +87,6 @@
             </div>
         </div>
     </footer>
-    <script src="krestiki-noliki.js"></script>
+    <script src="krestiki-noliki-2.0.js"></script>
 </body>
 </html>
