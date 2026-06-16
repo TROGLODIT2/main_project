@@ -159,6 +159,7 @@ main {
     padding: 5px;
     background-image: linear-gradient(45deg, #591abd, #b507b8, #f50c7d);
     width: fit-content;
+    max-width: 100%;
     display: flex;
     gap: 5px;
 }
@@ -564,7 +565,7 @@ footer {
     }
 
     .categories_background {
-        width: 100%;
+        /* width: 100%; */
         overflow-x: auto;
     }
 
