@@ -12,6 +12,11 @@ open_menu_button.addEventListener('click', function () {
     }
 })
 
+let nav_buttons = document.querySelectorAll('.nav_buttons');
+nav_buttons[1].addEventListener('click', function () {
+    location.assign('news.html');
+})
+
 function shuffle(arr) {
     let old_arr = arr.slice();
     let new_arr = [];

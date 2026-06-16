@@ -28,3 +28,8 @@ open_menu_button.addEventListener('click', function () {
         open_menu = false;
     }
 })
+
+let nav_buttons = document.querySelectorAll('.nav_buttons');
+nav_buttons[1].addEventListener('click', function () {
+    location.assign('news.html');
+})
