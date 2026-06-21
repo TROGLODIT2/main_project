@@ -567,10 +567,12 @@ footer {
     .categories_background {
         /* width: 100%; */
         overflow-x: auto;
+        scrollbar-width: none;
     }
 
     .games_list {
         overflow-x: auto;
+        scrollbar-width: none;
     }
 
     .memo_game {
