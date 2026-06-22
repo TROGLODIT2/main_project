@@ -535,6 +535,7 @@ footer {
 
 .chess_piece {
     background-color: cyan;
+    pointer-events: none;
     width: 80%;
     height: 80%;
 }

@@ -31,6 +31,7 @@ class Cell {
         this.name = cells_names[this.cell_id - 1];
         this.piece = null;
         this.selector = cell;
+        this.piece_color = null;
 
         this.left_edge = (this.cell_id + 7) % 8 == 0;
         this.top_edge = this.cell_id < 9;
@@ -38,15 +39,17 @@ class Cell {
         this.bottom_edge = this.cell_id > 56;
     }
 
-    add_piece (piece_name, piece_object) {
+    add_piece (piece_name, piece_object, piece_color) {
         // Добавление фигуры на клетку
         this.selector.appendChild(piece_object);
         this.piece = piece_name;
+        this.piece_color = piece_color;
     }
 
     delete_piece () {
         // Удаление фигуры с клетки
         this.piece = null;
+        this.piece_color = null;
     }
 
     check_piece () {
@@ -57,76 +60,152 @@ class Cell {
             return false;
         }
     }
+
+    add_move () {
+
+    }
+
+    delete_move () {
+
+    }
 }
 
 class Pawn {
     constructor(piece_color, already_moving, cell_id) {
         // Создание фигуры на доске
-        this.selector = create_piece('pawn', cell_id);
+        this.selector = create_piece('pawn', cell_id, piece_color);
 
         // Добавление сойств
+        this.piece_name = 'pawn';
         this.check = false;
         this.piece_color = piece_color;
         this.already_moving = already_moving;
         this.cell_id = cell_id;
+    }
+    
+    // Проверка нападения на короля
+    check_the_check() {
+
     }
 }
 
 class Rook {
     constructor(piece_color, already_moving, cell_id) {
         // Создание фигуры на доске
-        this.selector = create_piece('rook', cell_id);
+        this.selector = create_piece('rook', cell_id, piece_color);
 
         // Добавление сойств
+        this.piece_name = 'rook';
         this.piece_color = piece_color;
         this.already_moving = already_moving;
         this.cell_id = cell_id;
+    }
+
+    // Проверка нападения на короля
+    check_the_check() {
+
+    }
+
+    // Проверка связки короля
+    check_pins_to_king() {
+
     }
 }
 
 class Knight {
     constructor(piece_color, cell_id) {
         // Создание фигуры на доске
-        this.selector = create_piece('knight', cell_id);
+        this.selector = create_piece('knight', cell_id, piece_color);
 
         // Добавление сойств
+        this.piece_name = 'knight';
         this.piece_color = piece_color;
         this.cell_id = cell_id;
+    }
+    
+    // Проверка нападения на короля
+    check_the_check() {
+
     }
 }
 
 class Bishop {
     constructor(piece_color, cell_id) {
         // Создание фигуры на доске
-        this.selector = create_piece('bishop', cell_id);
+        this.selector = create_piece('bishop', cell_id, piece_color);
 
         // Добавление сойств
+        this.piece_name = 'bishop';
         this.piece_color = piece_color;
         this.cell_id = cell_id;
+    }
+    
+    // Проверка нападения на короля
+    check_the_check() {
+
+    }
+
+    // Проверка связки короля
+    check_pins_to_king() {
+
     }
 }
 
 class Queen {
     constructor(piece_color, cell_id) {
         // Создание фигуры на доске
-        this.selector = create_piece('queen', cell_id);
+        this.selector = create_piece('queen', cell_id, piece_color);
 
         // Добавление сойств
+        this.piece_name = 'queen';
         this.piece_color = piece_color;
         this.cell_id = cell_id;
+    }
+
+    // Проверка нападения на короля
+    check_the_check() {
+
+    }
+
+    // Проверка связки короля
+    check_pins_to_king() {
+
     }
 }
 
 class King {
     constructor(piece_color, already_moving, cell_id) {
         // Создание фигуры на доске
-        this.selector = create_piece('king', cell_id);
+        this.selector = create_piece('king', cell_id, piece_color);
 
         // Добавление сойств
+        this.piece_name = 'king';
         this.check = false;
         this.piece_color = piece_color;
         this.already_moving = already_moving;
         this.cell_id = cell_id;
+    }
+
+    // Проверка шаха
+    check_the_check() {
+        let other_team_color = '';
+        if (this.piece_color == 'white') {
+            other_team_color = 'black';
+        } else {
+            other_team_color = 'white';
+        }
+
+        let check = false;
+
+        // Проверка нападения вражеских фигур на короля
+        for (let i = 0; i < pieces.length; i++) {
+            if (pieces[i].piece_color == other_team_color) {
+                if (pieces[i].check_the_check == true) {
+                    check = true;
+                }
+            }
+        }
+        return true;
     }
 }
 
@@ -163,12 +242,36 @@ function name_to_id(cell_name) {
 }
 
 // Создает объет фигуры в DOM дереве
-function create_piece(piece_name, cell_id) {
+function create_piece(piece_name, cell_id, piece_color) {
     let piece = document.createElement('div');
     piece.classList.add('chess_piece');
     piece.classList.add(`chess_${piece_name}`);
-    cells[cell_id - 1].add_piece(`${piece_name}`, piece);
+    cells[cell_id - 1].add_piece(`${piece_name}`, piece, piece_color);
     return piece;
+}
+
+// Получение id объекта короля
+function get_king_object_id(king_color) {
+    for (let i = 0; i < pieces.length; i++) {
+        // Проверка цвета фигуры
+        if (pieces[i].piece_color == king_color) {
+            // проверка на объект короля
+            if (pieces[i].piece_name == 'king') {
+                return i;
+            }
+        }
+    }
+}
+
+// Добавление возможных ходов фигуре
+function add_moves(cell_object) {
+    let king_id = get_king_object_id(cell_object.piece_color);
+    if (pieces[king_id].check_the_check() == true) {
+        console.log('Нашему королю объявлен шах');
+    } else {
+        console.log('Король в безопасности');
+    }
+
 }
 
 // Расстановка фигур
@@ -220,4 +323,27 @@ pieces.push(new King('white', false, name_to_id('e1')));
 // Пешки
 for (let i = 0; i < 8; i++) {
     pieces.push(new Pawn('white', false, name_to_id(`${letters[i]}2`)));
+}
+
+// Основной код
+/*
+Детали реализации
+1. Проверить шахи (если да, то проверить возможность заслона своего короля)
+2. Проверить наличие связки короля
+3. Проверить возможные ходы на наличие преград
+*/
+
+// Очередь хода
+let turn = 1;
+
+for (let i = 0; i < 64; i++) {
+    cells[i].selector.addEventListener('click', function () {
+        if (turn == 1) {
+            if (cells[i].piece_color == 'white') {
+                add_moves(cells[i]);
+            } else if (cells[i].piece_color == 'black') {
+                console.log('Выбрана черная фигура');
+            }
+        }
+    })
 }
