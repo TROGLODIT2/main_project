@@ -164,8 +164,94 @@ class Queen {
 
     // Проверка нападения на короля
     check_the_check() {
+        // Получение цвета противника
+        let other_team_color = '';
+        if (this.piece_color == 'white') {
+            other_team_color = 'black';
+        } else {
+            other_team_color = 'white';
+        }
 
+        // Проверка горизонтали слева от клетки
+        if (cells[this.cell_id - 1].left_edge == false) {
+            for (let i = 1; i < 9; i++) {
+                // Проверка на фигуру
+                if (cells[this.cell_id - 1 - i].check_piece() == true) {
+                    // Проверка на то, что фигура на проверяемой клетке - король
+                    if (cells[this.cell_id - 1 - i].piece == 'king' && cells[this.cell_id - 1 - i].piece_color == other_team_color) {
+                        return true;
+                    } else {
+                        break;
+                    }
+                }
+                // Проверка на край
+                if (cells[this.cell_id - 1 - i].left_edge == true) {
+                    break;
+                }
+            }
+        }
+
+        // Проверка горизонтали справа от клетки
+        if (cells[this.cell_id - 1].right_edge == false) {
+            for (let i = 1; i < 9; i++) {
+                // Проверка на фигуру
+                if (cells[this.cell_id - 1 + i].check_piece() == true) {
+                    // Проверка на то, что фигура на проверяемой клетке - король
+                    if (cells[this.cell_id - 1 + i].piece == 'king' && cells[this.cell_id - 1 + i].piece_color == other_team_color) {
+                        return true;
+                    } else {
+                        break;
+                    }
+                }
+                // Проверка на край
+                if (cells[this.cell_id - 1 + i].right_edge == true) {
+                    break;
+                }
+            }
+        }
+
+        // Проверка горизонтали сверху от клетки
+        if (cells[this.cell_id - 1].top_edge == false) {
+            for (let i = 1; i < 9; i++) {
+                // Проверка на фигуру
+                if (cells[this.cell_id - 1 - i * 8].check_piece() == true) {
+                    // Проверка на то, что фигура на проверяемой клетке - король
+                    if (cells[this.cell_id - 1 - i * 8].piece == 'king' && cells[this.cell_id - 1 - i * 8].piece_color == other_team_color) {
+                        return true;
+                    } else {
+                        break;
+                    }
+                }
+                // Проверка на край
+                if (cells[this.cell_id - 1 - i * 8].top_edge == true) {
+                    break;
+                }
+            }
+        }
+
+        // Проверка горизонтали снизу от клетки
+        if (cells[this.cell_id - 1].bottom_edge == false) {
+            for (let i = 1; i < 9; i++) {
+                // Проверка на фигуру
+                if (cells[this.cell_id - 1 + i * 8].check_piece() == true) {
+                    // Проверка на то, что фигура на проверяемой клетке - король
+                    if (cells[this.cell_id - 1 + i * 8].piece == 'king' && cells[this.cell_id - 1 + i * 8].piece_color == other_team_color) {
+                        return true;
+                    } else {
+                        break;
+                    }
+                }
+                // Проверка на край
+                if (cells[this.cell_id - 1 + i].bottom_edge == true) {
+                    break;
+                }
+            }
+        }
+
+        return false;
     }
+
+    
 
     // Проверка связки короля
     check_pins_to_king() {
@@ -195,17 +281,17 @@ class King {
             other_team_color = 'white';
         }
 
-        let check = false;
-
         // Проверка нападения вражеских фигур на короля
         for (let i = 0; i < pieces.length; i++) {
             if (pieces[i].piece_color == other_team_color) {
-                if (pieces[i].check_the_check == true) {
-                    check = true;
+                if (pieces[i].check_the_check() == true) {
+                    return true;
                 }
             }
         }
-        return true;
+
+        // Если ни 1 фигура не объявляет шах
+        return false;
     }
 }
 
@@ -269,14 +355,67 @@ function add_moves(cell_object) {
     if (pieces[king_id].check_the_check() == true) {
         console.log('Нашему королю объявлен шах');
     } else {
-        console.log('Король в безопасности');
+        console.log('Король в безопасности, можно ходить');
+        // Проверка на связку фигуры
+    }
+}
+
+// ПЕРЕДЕЛАТЬ МЕТОД ОПРЕДЕЛЕНИЯ ШАХА С ИСПОЛЬЗОВАНИЕМ ЭТОЙ ФУНКЦИИ
+// ДОБАВИТЬ ДИАГОНАЛИ В ФУНКЦИЮ, А ТАКЖЕ ХОДЫ КОНЯ
+// Функция, возвращающая атакованные клетки по одной из линий атаки фигуры
+function get_line_cells(cell_id, line_type) {
+    let attacked_cells = [];
+
+    // Определение линии атаки
+    let edge = '';
+    let mult = 0;
+    if (line_type == 'left') {
+        mult = -1;
+        edge = 'left_edge'
+    } else if (line_type == 'right') {
+        mult = 1;
+        edge = 'right_edge';
+    } else if (line_type == 'top') {
+        mult = -8;
+        edge = 'top_edge';
+    } else if (line_type == 'bottom') {
+        mult = 8;
+        edge = 'bottom_edge';
     }
 
+    // Проверка атакованных клеток
+    if (cells[cell_id - 1][edge] == false) {
+        for (let i = 1; i < 9; i++) {
+            attacked_cells.push(cell_id + i * mult)
+            // Проверка на фигуру
+            if (cells[cell_id - 1 + i * mult].check_piece() == true) {
+                break;
+            }
+            // Проверка на край
+            if (cells[cell_id - 1 + i * mult][edge] == true) {
+                break;
+            }
+        }
+    }
+
+    return attacked_cells;
 }
+
+// Функция, которая возвращает клетки, атакованные фигурой
+function get_attacked_cells(cell_id, type_attack) {
+    let attacked_cells = [];
+    if (type_attack == 'rook') {
+        // С ПОМОЩЬЮ МНОЖЕСТВ ОБЪЕДЕНИТЬ ВСЕ КЛЕТКИ, АТАКОВАННЫЕ ФИГУРОЙ
+        //get_line_cells(cell_id, line_type)
+    }
+}
+
+
 
 // Расстановка фигур
 let pieces = [];
-
+/* 
+        ОТКЛЮЧЕНО ДЛЯ ОТЛАДКИ        ОТКЛЮЧЕНО ДЛЯ ОТЛАДКИ        ОТКЛЮЧЕНО ДЛЯ ОТЛАДКИ        ОТКЛЮЧЕНО ДЛЯ ОТЛАДКИ
 // Расстановка черных фигур
 // Ладьи
 pieces.push(new Rook('black', false, name_to_id('a8')));
@@ -301,6 +440,7 @@ for (let i = 0; i < 8; i++) {
     pieces.push(new Pawn('black', false, name_to_id(`${letters[i]}7`)));
 }
 
+
 // Расстановка белых фигур
 // Ладьи
 pieces.push(new Rook('white', false, name_to_id('a1')));
@@ -324,6 +464,11 @@ pieces.push(new King('white', false, name_to_id('e1')));
 for (let i = 0; i < 8; i++) {
     pieces.push(new Pawn('white', false, name_to_id(`${letters[i]}2`)));
 }
+        ОТКЛЮЧЕНО ДЛЯ ОТЛАДКИ        ОТКЛЮЧЕНО ДЛЯ ОТЛАДКИ        ОТКЛЮЧЕНО ДЛЯ ОТЛАДКИ        ОТКЛЮЧЕНО ДЛЯ ОТЛАДКИ
+*/
+
+pieces.push(new Queen('black', name_to_id('e8')));
+pieces.push(new King('white', false, name_to_id('e1')));
 
 // Основной код
 /*
