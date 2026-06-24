@@ -37,6 +37,11 @@ class Cell {
         this.top_edge = this.cell_id < 9;
         this.right_edge = this.cell_id % 8 == 0;
         this.bottom_edge = this.cell_id > 56;
+
+        this.knight_left_edge = (this.cell_id + 6) % 8 == 0 || (this.cell_id + 7) % 8 == 0;
+        this.knight_top_edge = this.cell_id < 17;
+        this.knight_right_edge = (this.cell_id + 1) % 8 == 0 || this.cell_id % 8 == 0;
+        this.knight_bottom_edge = this.cell_id > 48;
     }
 
     add_piece (piece_name, piece_object, piece_color) {
@@ -280,14 +285,20 @@ class King {
         } else {
             other_team_color = 'white';
         }
-
         // Проверка нападения вражеских фигур на короля
         for (let i = 0; i < pieces.length; i++) {
             if (pieces[i].piece_color == other_team_color) {
+                // Устаревший код
+                /*
                 if (pieces[i].check_the_check() == true) {
                     return true;
                 }
+                */
+                if (get_attacked_cells(pieces[i].cell_id, pieces[i].piece_name, other_team_color).includes(this.cell_id) == true) {
+                    return true;
+                }
             }
+
         }
 
         // Если ни 1 фигура не объявляет шах
@@ -357,43 +368,140 @@ function add_moves(cell_object) {
     } else {
         console.log('Король в безопасности, можно ходить');
         // Проверка на связку фигуры
+
     }
 }
 
-// ПЕРЕДЕЛАТЬ МЕТОД ОПРЕДЕЛЕНИЯ ШАХА С ИСПОЛЬЗОВАНИЕМ ЭТОЙ ФУНКЦИИ
-// ДОБАВИТЬ ДИАГОНАЛИ В ФУНКЦИЮ, А ТАКЖЕ ХОДЫ КОНЯ
-// Функция, возвращающая атакованные клетки по одной из линий атаки фигуры
-function get_line_cells(cell_id, line_type) {
+// Функция, возвращающая атакованные клетки по одной из линий атаки фигуры ИСПОЛЬЗУЕТСЯ ВЫШЕ
+function get_line_cells(cell_id, line_type, number, piece_color) {
     let attacked_cells = [];
 
     // Определение линии атаки
-    let edge = '';
+    let first_edge = '';
+    let second_edge = '';
     let mult = 0;
     if (line_type == 'left') {
         mult = -1;
-        edge = 'left_edge'
+        first_edge = 'left_edge';
+        second_edge = 'left_edge';
     } else if (line_type == 'right') {
         mult = 1;
-        edge = 'right_edge';
+        first_edge = 'right_edge';
+        second_edge = 'right_edge';
     } else if (line_type == 'top') {
         mult = -8;
-        edge = 'top_edge';
+        first_edge = 'top_edge';
+        second_edge = 'top_edge';
     } else if (line_type == 'bottom') {
         mult = 8;
-        edge = 'bottom_edge';
+        first_edge = 'bottom_edge';
+        second_edge = 'bottom_edge';
+    } else if (line_type == 'topleft') {
+        mult = -9;
+        first_edge = 'top_edge';
+        second_edge = 'left_edge';
+    } else if (line_type == 'topright') {
+        mult = -7;
+        first_edge = 'top_edge';
+        second_edge = 'right_edge';
+    } else if (line_type == 'bottomleft') {
+        mult = 7;
+        first_edge = 'bottom_edge';
+        second_edge = 'left_edge';
+    } else if (line_type == 'bottomright') {
+        mult = 9;
+        first_edge = 'bottom_edge';
+        second_edge = 'right_edge';
     }
 
-    // Проверка атакованных клеток
-    if (cells[cell_id - 1][edge] == false) {
-        for (let i = 1; i < 9; i++) {
-            attacked_cells.push(cell_id + i * mult)
-            // Проверка на фигуру
-            if (cells[cell_id - 1 + i * mult].check_piece() == true) {
-                break;
+    // Проверка на коня
+    if (line_type != 'knight') {
+        // Проверка атакованных клеток
+        if (cells[cell_id - 1][first_edge] == false && cells[cell_id - 1][second_edge] == false) {
+            for (let i = 1; i < number + 1; i++) {
+                // Добавление клетки в список атакованных
+                if (cells[cell_id - 1 + i * mult].piece_color != piece_color) {
+                    attacked_cells.push(cell_id + i * mult);
+                }
+                // Проверка на фигуру
+                if (cells[cell_id - 1 + i * mult].check_piece() == true) {
+                    break;
+                }
+                // Проверка на край
+                if (cells[cell_id - 1 + i * mult][first_edge] == true || cells[cell_id - 1 + i * mult][second_edge] == true) {
+                    break;
+                }
             }
-            // Проверка на край
-            if (cells[cell_id - 1 + i * mult][edge] == true) {
-                break;
+        }
+    } else {
+        // Левые клетки
+        if (cells[cell_id - 1].knight_left_edge == false) {
+            console.log('Левые клетки свободны');
+            // Верхняя клетка
+            if (cells[cell_id - 1].top_edge == false) {
+                if (cells[cell_id - 1 - 10].piece_color != piece_color) {
+                    attacked_cells.push(cell_id - 10);
+                }
+            }
+
+            // Нижняя клетка
+            if (cells[cell_id - 1].bottom_edge == false) {
+                if (cells[cell_id - 1 + 6].piece_color != piece_color) {
+                    attacked_cells.push(cell_id + 6);
+                }
+            }
+        }
+
+        // Правые клетки
+        if (cells[cell_id - 1].knight_right_edge == false) {
+            console.log('Правые клетки свободны');
+            // Верхняя клетка
+            if (cells[cell_id - 1].top_edge == false) {
+                if (cells[cell_id - 1 - 6].piece_color != piece_color) {
+                    attacked_cells.push(cell_id - 6);
+                }
+            }
+
+            // Нижняя клетка
+            if (cells[cell_id - 1].bottom_edge == false) {
+                if (cells[cell_id - 1 + 10].piece_color != piece_color) {
+                    attacked_cells.push(cell_id + 10);
+                }
+            }
+        }
+        // Верхние клетки
+        if (cells[cell_id - 1].knight_top_edge == false) {
+            console.log('Верхние клетки свободны');
+            // Левая клетка
+            if (cells[cell_id - 1].left_edge == false) {
+                if (cells[cell_id - 1 - 15].piece_color != piece_color) {
+                    attacked_cells.push(cell_id - 15);
+                }
+            }
+
+            // Правая клетка
+            if (cells[cell_id - 1].right_edge == false) {
+                if (cells[cell_id - 1 - 17].piece_color != piece_color) {
+                    attacked_cells.push(cell_id - 17);
+                }
+            }
+        }
+
+        // Нижние клетки
+        if (cells[cell_id - 1].knight_bottom_edge == false) {
+            console.log('Нижние клетки свободны');
+            // Левая клетка
+            if (cells[cell_id - 1].left_edge == false) {
+                if (cells[cell_id - 1 + 15].piece_color != piece_color) {
+                    attacked_cells.push(cell_id + 15);
+                }
+            }
+
+            // Правая клетка
+            if (cells[cell_id - 1].right_edge == false) {
+                if (cells[cell_id - 1 + 17].piece_color != piece_color) {
+                    attacked_cells.push(cell_id + 17);
+                }
             }
         }
     }
@@ -402,12 +510,39 @@ function get_line_cells(cell_id, line_type) {
 }
 
 // Функция, которая возвращает клетки, атакованные фигурой
-function get_attacked_cells(cell_id, type_attack) {
+function get_attacked_cells(cell_id, type_attack, piece_color) {
     let attacked_cells = [];
     if (type_attack == 'rook') {
-        // С ПОМОЩЬЮ МНОЖЕСТВ ОБЪЕДЕНИТЬ ВСЕ КЛЕТКИ, АТАКОВАННЫЕ ФИГУРОЙ
-        //get_line_cells(cell_id, line_type)
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'left', 8, piece_color)];
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'right', 8, piece_color)];
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'top', 8, piece_color)];
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'bottom', 8, piece_color)];
     }
+    if (type_attack == 'bishop') {
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'topleft', 8, piece_color)];
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'topright', 8, piece_color)];
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'bottomleft', 8, piece_color)];
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'bottomright', 8, piece_color)];
+    }
+    if (type_attack == 'queen') {
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'left', 8, piece_color)];
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'right', 8, piece_color)];
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'top', 8, piece_color)];
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'bottom', 8, piece_color)];
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'topleft', 8, piece_color)];
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'topright', 8, piece_color)];
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'bottomleft', 8, piece_color)];
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'bottomright', 8, piece_color)];
+    }
+    if (type_attack == 'knight') {
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'knight', 8, piece_color)];
+    }
+    if (type_attack == 'pawn') {
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'topleft', 1, piece_color)];
+        attacked_cells = [...attacked_cells, ...get_line_cells(cell_id, 'topright', 1, piece_color)];
+    }
+
+    return attacked_cells;
 }
 
 
@@ -469,6 +604,7 @@ for (let i = 0; i < 8; i++) {
 
 pieces.push(new Queen('black', name_to_id('e8')));
 pieces.push(new King('white', false, name_to_id('e1')));
+pieces.push(new Queen('white', name_to_id('e2')));
 
 // Основной код
 /*
