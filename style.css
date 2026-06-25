@@ -521,7 +521,7 @@ footer {
 .chess_board {
     height: 100%;
     aspect-ratio: 1/1;
-    background-color: lightblue;
+    background-color: ghostwhite;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(8, 1fr);
@@ -534,10 +534,9 @@ footer {
 }
 
 .chess_piece {
-    background-color: cyan;
     pointer-events: none;
-    width: 80%;
-    height: 80%;
+    width: 100%;
+    height: 100%;
 }
 
 @media (max-width: 768px) {

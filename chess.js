@@ -79,6 +79,8 @@ class Pawn {
     constructor(piece_color, already_moving, cell_id) {
         // Создание фигуры на доске
         this.selector = create_piece('pawn', cell_id, piece_color);
+        this.selector.style.backgroundImage = `url(src/picture/chess/${piece_color}_pawn.svg)`;
+        this.selector.style.backgroundSize = 'cover';
 
         // Добавление сойств
         this.piece_name = 'pawn';
@@ -98,6 +100,8 @@ class Rook {
     constructor(piece_color, already_moving, cell_id) {
         // Создание фигуры на доске
         this.selector = create_piece('rook', cell_id, piece_color);
+        this.selector.style.backgroundImage = `url(src/picture/chess/${piece_color}_rook.svg)`;
+        this.selector.style.backgroundSize = 'cover';
 
         // Добавление сойств
         this.piece_name = 'rook';
@@ -121,6 +125,8 @@ class Knight {
     constructor(piece_color, cell_id) {
         // Создание фигуры на доске
         this.selector = create_piece('knight', cell_id, piece_color);
+        this.selector.style.backgroundImage = `url(src/picture/chess/${piece_color}_knight.svg)`;
+        this.selector.style.backgroundSize = 'cover';
 
         // Добавление сойств
         this.piece_name = 'knight';
@@ -138,6 +144,8 @@ class Bishop {
     constructor(piece_color, cell_id) {
         // Создание фигуры на доске
         this.selector = create_piece('bishop', cell_id, piece_color);
+        this.selector.style.backgroundImage = `url(src/picture/chess/${piece_color}_bishop.svg)`;
+        this.selector.style.backgroundSize = 'cover';
 
         // Добавление сойств
         this.piece_name = 'bishop';
@@ -160,6 +168,8 @@ class Queen {
     constructor(piece_color, cell_id) {
         // Создание фигуры на доске
         this.selector = create_piece('queen', cell_id, piece_color);
+        this.selector.style.backgroundImage = `url(src/picture/chess/${piece_color}_queen.svg)`;
+        this.selector.style.backgroundSize = 'cover';
 
         // Добавление сойств
         this.piece_name = 'queen';
@@ -268,6 +278,8 @@ class King {
     constructor(piece_color, already_moving, cell_id) {
         // Создание фигуры на доске
         this.selector = create_piece('king', cell_id, piece_color);
+        this.selector.style.backgroundImage = `url(src/picture/chess/${piece_color}_king.svg)`;
+        this.selector.style.backgroundSize = 'cover';
 
         // Добавление сойств
         this.piece_name = 'king';
@@ -303,6 +315,52 @@ class King {
 
         // Если ни 1 фигура не объявляет шах
         return false;
+    }
+
+    check_pins() {
+        let all_pins = [];
+
+        if (check_pin('left', this.cell_id, this.piece_color) != 0) {
+            all_pins.push(check_pin('left', this.cell_id, this.piece_color));
+            all_pins.push('left');
+        }
+
+        if (check_pin('right', this.cell_id, this.piece_color) != 0) {
+            all_pins.push(check_pin('right', this.cell_id, this.piece_color));
+            all_pins.push('right');
+        }
+
+        if (check_pin('top', this.cell_id, this.piece_color) != 0) {
+            all_pins.push(check_pin('top', this.cell_id, this.piece_color));
+            all_pins.push('top');
+        }
+
+        if (check_pin('bottom', this.cell_id, this.piece_color) != 0) {
+            all_pins.push(check_pin('bottom', this.cell_id, this.piece_color));
+            all_pins.push('bottom');
+        }
+
+        if (check_pin('topleft', this.cell_id, this.piece_color) != 0) {
+            all_pins.push(check_pin('topleft', this.cell_id, this.piece_color));
+            all_pins.push('topleft');
+        }
+
+        if (check_pin('topright', this.cell_id, this.piece_color) != 0) {
+            all_pins.push(check_pin('topright', this.cell_id, this.piece_color));
+            all_pins.push('topright');
+        }
+
+        if (check_pin('bottomleft', this.cell_id, this.piece_color) != 0) {
+            all_pins.push(check_pin('bottomleft', this.cell_id, this.piece_color));
+            all_pins.push('bottomleft');
+        }
+
+        if (check_pin('bottomright', this.cell_id, this.piece_color) != 0) {
+            all_pins.push(check_pin('bottomright', this.cell_id, this.piece_color));
+            all_pins.push('bottomright');
+        }
+
+        return all_pins;
     }
 }
 
@@ -348,13 +406,17 @@ function create_piece(piece_name, cell_id, piece_color) {
 }
 
 // Получение id объекта короля
-function get_king_object_id(king_color) {
+function get_piece_object_id(piece_name, piece_color, cell_id) {
     for (let i = 0; i < pieces.length; i++) {
         // Проверка цвета фигуры
-        if (pieces[i].piece_color == king_color) {
+        if (pieces[i].piece_color == piece_color) {
             // проверка на объект короля
-            if (pieces[i].piece_name == 'king') {
-                return i;
+            if (pieces[i].piece_name == piece_name) {
+                if (cell_id == 0) {
+                    return i;
+                } else if (pieces[i].cell_id == cell_id) {
+                    return i;
+                }
             }
         }
     }
@@ -362,12 +424,31 @@ function get_king_object_id(king_color) {
 
 // Добавление возможных ходов фигуре
 function add_moves(cell_object) {
-    let king_id = get_king_object_id(cell_object.piece_color);
+    let piece_moves_cells = [];
+
+    let king_id = get_piece_object_id('king', cell_object.piece_color, 0);
     if (pieces[king_id].check_the_check() == true) {
-        console.log('Нашему королю объявлен шах');
+        // если объявлен шах
     } else {
-        console.log('Король в безопасности, можно ходить');
+        // Если шаха нет
+
         // Проверка на связку фигуры
+        if (pieces[king_id].check_pins().includes(cell_object.cell_id) == false) {
+            if (cell_object.piece != 'pawn') {
+                piece_moves_cells = get_attacked_cells(cell_object.cell_id, cell_object.piece, cell_object.piece_color);
+            } else {
+                if (pieces[get_piece_object_id('pawn', cell_object.piece_color, cell_object.cell_id)].already_moving == false) {
+                    piece_moves_cells = get_line_cells(cell_object.cell_id, 'top', 2, cell_object.piece_color);
+                } else {
+                    piece_moves_cells = get_line_cells(cell_object.cell_id, 'top', 1, cell_object.piece_color);
+                }
+            }
+            
+            // Добавить проверку на пешку
+        } else {
+            // Добавить проверки возможных ходов у связанной фигуры
+        }
+        console.log(piece_moves_cells);
 
     }
 }
@@ -545,7 +626,87 @@ function get_attacked_cells(cell_id, type_attack, piece_color) {
     return attacked_cells;
 }
 
+function check_pin(line_type, cell_id, king_color) {
+    // Определение линии возможной связки
+    let first_edge = '';
+    let second_edge = '';
+    let mult = 0;
+    let second_piece = '';
 
+    if (line_type == 'left') {
+        mult = -1;
+        first_edge = 'left_edge';
+        second_edge = 'left_edge';
+        second_piece = 'rook';
+    } else if (line_type == 'right') {
+        mult = 1;
+        first_edge = 'right_edge';
+        second_edge = 'right_edge';
+        second_piece = 'rook';
+    } else if (line_type == 'top') {
+        mult = -8;
+        first_edge = 'top_edge';
+        second_edge = 'top_edge';
+        second_piece = 'rook';
+    } else if (line_type == 'bottom') {
+        mult = 8;
+        first_edge = 'bottom_edge';
+        second_edge = 'bottom_edge';
+        second_piece = 'rook';
+    } else if (line_type == 'topleft') {
+        mult = -9;
+        first_edge = 'top_edge';
+        second_edge = 'left_edge';
+        second_piece = 'bishop';
+    } else if (line_type == 'topright') {
+        mult = -7;
+        first_edge = 'top_edge';
+        second_edge = 'right_edge';
+        second_piece = 'bishop';
+    } else if (line_type == 'bottomleft') {
+        mult = 7;
+        first_edge = 'bottom_edge';
+        second_edge = 'left_edge';
+        second_piece = 'bishop';
+    } else if (line_type == 'bottomright') {
+        mult = 9;
+        first_edge = 'bottom_edge';
+        second_edge = 'right_edge';
+        second_piece = 'bishop';
+    }
+
+    let found_piece = false;
+    let pin_cell = 0;
+
+    // Проверка атакованных клеток
+    if (cells[cell_id - 1][first_edge] == false && cells[cell_id - 1][second_edge] == false) {
+        for (let i = 1; i < 9 + 1; i++) {
+            if (found_piece == false) {
+                // Проверка цвета фигуры
+                if (cells[cell_id - 1 + i * mult].piece_color == king_color && cells[cell_id - 1 + i * mult].check_piece() == true) {
+                    found_piece = true;
+                    pin_cell = cell_id + i * mult;
+                } else if (cells[cell_id - 1 + i * mult].check_piece == true) {
+                    return 0;
+                }
+            } else {
+                if (cells[cell_id - 1 + i * mult].piece_color != king_color && cells[cell_id - 1 + i * mult].check_piece() == true) {
+                    if (cells[cell_id - 1 + i * mult].piece == 'queen' || cells[cell_id - 1 + i * mult].piece == second_piece) {
+                        return pin_cell;
+                    }
+                    return 0;
+                } else if (cells[cell_id - 1 + i * mult].check_piece == true) {
+                    return 0;
+                }
+            }
+            // Проверка на край
+            if (cells[cell_id - 1 + i * mult][first_edge] == true || cells[cell_id - 1 + i * mult][second_edge] == true) {
+                return 0;
+            }
+        }
+    }
+    return 0;
+}
 
 // Расстановка фигур
 let pieces = [];
@@ -605,6 +766,14 @@ for (let i = 0; i < 8; i++) {
 pieces.push(new Queen('black', name_to_id('e8')));
 pieces.push(new King('white', false, name_to_id('e1')));
 pieces.push(new Queen('white', name_to_id('e2')));
+
+pieces.push(new Rook('white', false, name_to_id('a1')));
+pieces.push(new Rook('white', false, name_to_id('h1')));
+
+// Пешки
+for (let i = 0; i < 4; i++) {
+    pieces.push(new Pawn('white', false, name_to_id(`${letters[i]}2`)));
+}
 
 // Основной код
 /*
