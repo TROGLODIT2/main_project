@@ -1208,10 +1208,32 @@ function delete_moves() {
     }
 }
 
+let modal = document.querySelector('.chess_modal');
+let chose_pieces = document.querySelectorAll('.chose_piece');
+let chosen_piece = null;
+
+for (let i = 0; i < chose_pieces.length; i++) {
+    chose_pieces[i].addEventListener('click', function () {
+        chosen_piece = i;
+    });
+}
+
+function show_modal(color) {
+    modal.style.display = 'flex';
+
+    chose_pieces[0].style.backgroundImage = `url(src/picture/chess/${color}_queen.svg)`;
+    chose_pieces[1].style.backgroundImage = `url(src/picture/chess/${color}_rook.svg)`;
+    chose_pieces[2].style.backgroundImage = `url(src/picture/chess/${color}_bishop.svg)`;
+    chose_pieces[3].style.backgroundImage = `url(src/picture/chess/${color}_knight.svg)`;
+}
+
+function hide_modal() {
+    modal.style.display = 'none';
+}
+
 // Расстановка фигур
 let pieces = [];
 
-//        ОТКЛЮЧЕНО ДЛЯ ОТЛАДКИ        ОТКЛЮЧЕНО ДЛЯ ОТЛАДКИ        ОТКЛЮЧЕНО ДЛЯ ОТЛАДКИ        ОТКЛЮЧЕНО ДЛЯ ОТЛАДКИ
 // Расстановка черных фигур
 // Ладьи
 pieces.push(new Rook('black', false, name_to_id('a8')));
@@ -1260,28 +1282,29 @@ pieces.push(new King('white', false, name_to_id('e1')));
 for (let i = 0; i < 8; i++) {
     pieces.push(new Pawn('white', false, name_to_id(`${letters[i]}2`)));
 }
-//        ОТКЛЮЧЕНО ДЛЯ ОТЛАДКИ        ОТКЛЮЧЕНО ДЛЯ ОТЛАДКИ        ОТКЛЮЧЕНО ДЛЯ ОТЛАДКИ        ОТКЛЮЧЕНО ДЛЯ ОТЛАДКИ
 
 
-// pieces.push(new Queen('black', name_to_id('e8')));
-// pieces.push(new King('black', false, name_to_id('g3')));
+/*
+pieces.push(new Queen('black', name_to_id('e8')));
+pieces.push(new King('black', false, name_to_id('g3')));
 
 
-// pieces.push(new King('white', false, name_to_id('e1')));
-// pieces.push(new Queen('white', name_to_id('e2')));
+pieces.push(new King('white', false, name_to_id('e1')));
+pieces.push(new Queen('white', name_to_id('e2')));
 
-// pieces.push(new Rook('white', false, name_to_id('a1')));
-// pieces.push(new Rook('white', false, name_to_id('h1')));
+pieces.push(new Rook('white', false, name_to_id('a1')));
+pieces.push(new Rook('white', false, name_to_id('h1')));
 
-// pieces.push(new Knight('white', name_to_id('b1')));
-// pieces.push(new Pawn('black', false, name_to_id(`c4`)));
+pieces.push(new Knight('white', name_to_id('b1')));
+pieces.push(new Pawn('black', false, name_to_id(`c4`)));
 
-// pieces.push(new Pawn('black', false, name_to_id('a7')));
+pieces.push(new Pawn('black', false, name_to_id('a7')));
 
-// // Пешки
-// for (let i = 0; i < 4; i++) {
-//     pieces.push(new Pawn('white', false, name_to_id(`${letters[i]}2`)));
-// }
+// Пешки
+for (let i = 0; i < 4; i++) {
+    pieces.push(new Pawn('white', false, name_to_id(`${letters[i]}2`)));
+}
+*/
 
 // Основной код
 /*
@@ -1316,15 +1339,18 @@ for (let i = 0; i < 64; i++) {
 
                 if (pieces[move_piece].piece_name == 'pawn' && pieces[move_piece].already_moving == false) {
                     if (pieces[move_piece].piece_color == 'white' && cells[move_cell_id - 1].cell_id != cells[i].cell_id + 8) {
+                        delete_en_passent();
                         cells[pieces[move_piece].cell_id + 7].en_passant_cell = cells[i].cell_id;
                     }
-                } else {
-                    delete_en_passent()
                 }
 
                 if (pieces[move_piece].piece_name == 'pawn' && cells[i].en_passant_cell != null) {
                     pieces.splice(get_piece_object_id(cells[i + 8].piece, 'black', cells[i + 8].cell_id), 1);
                     cells[i + 8].delete_piece();
+                    delete_en_passent()
+                }
+                
+                if (!(pieces[move_piece].piece_name == 'pawn' && pieces[move_piece].already_moving == false)) {
                     delete_en_passent()
                 }
                 
@@ -1368,8 +1394,8 @@ for (let i = 0; i < 64; i++) {
                     cells[i].delete_piece();
                 }
 
-                if (pieces[move_piece].piece_name == 'pawn') {
-                    console.log('пешка')
+                if (cells[i].cell_id < 9 && new_piece_name == 'pawn') {
+                    show_modal('white');
                 }
 
                 cells[i].add_piece(new_piece_name, new_piece, 'white');
@@ -1395,15 +1421,18 @@ for (let i = 0; i < 64; i++) {
 
                 if (pieces[move_piece].piece_name == 'pawn' && pieces[move_piece].already_moving == false) {
                     if (pieces[move_piece].piece_color == 'black' && cells[move_cell_id - 1].cell_id != cells[i].cell_id + 8) {
+                        delete_en_passent();
                         cells[pieces[move_piece].cell_id - 9].en_passant_cell = cells[i].cell_id;
                     }
-                } else {
-                    delete_en_passent()
                 }
 
                 if (pieces[move_piece].piece_name == 'pawn' && cells[i].en_passant_cell != null) {
                     pieces.splice(get_piece_object_id(cells[i - 8].piece, 'white', cells[i - 8].cell_id), 1);
                     cells[i - 8].delete_piece();
+                    delete_en_passent()
+                }
+
+                if (!(pieces[move_piece].piece_name == 'pawn' && pieces[move_piece].already_moving == false)) {
                     delete_en_passent()
                 }
 
