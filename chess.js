@@ -582,6 +582,7 @@ function get_moves(cell_object) {
                         if (pieces[king_id].already_moving == false) {
                             // Длинная рокировка
                             if (cells[name_to_id('a8') - 1].check_piece() == true && cells[name_to_id('a8') - 1].piece == 'rook') {
+                                console.log(name_to_id('a8'), get_piece_object_id('rook', 'black', name_to_id('a8')), pieces[get_piece_object_id('rook', 'black', name_to_id('a8'))]);
                                 let rook = pieces[get_piece_object_id('rook', 'black', name_to_id('a8'))];
                                 if (rook.already_moving == false) {
                                     // Проверка клеток рокировки
@@ -644,7 +645,7 @@ function get_moves(cell_object) {
                 console.log(cell_object.cell_id, cell_object.piece, cell_object.piece_color);
 
                 for (let i of get_attacked_cells(cell_object.cell_id, cell_object.piece, cell_object.piece_color)) {
-                    if (cells[i - 1].check_piece() == true && cells[i].piece_color != cell_object.piece_color) {
+                    if (cells[i - 1].check_piece() == true && cells[i - 1].piece_color != cell_object.piece_color) {
                         piece_moves_cells.push(i);
                     } else if (cells[i - 1].en_passant_cell != null) {
                         piece_moves_cells.push(i);
@@ -1210,13 +1211,42 @@ function delete_moves() {
 
 let modal = document.querySelector('.chess_modal');
 let chose_pieces = document.querySelectorAll('.chose_piece');
-let chosen_piece = null;
 
-for (let i = 0; i < chose_pieces.length; i++) {
-    chose_pieces[i].addEventListener('click', function () {
-        chosen_piece = i;
+
+function chose_new_piece(pawn_color, cell_id) {
+    let promise_choose_piece = new Promise(function (resolve, reject) {
+        for (let i = 0; i < chose_pieces.length; i++) {
+            chose_pieces[i].addEventListener('click', function () {
+                resolve(i);
+            });
+        }
     });
+    
+    promise_choose_piece.then(function (chosen_piece) {
+        hide_modal()
+    
+        for (let i = 0; i < chose_pieces.length; i++) {
+            chose_pieces[i].removeEventListener('click', function () {
+                resolve(i);
+            });
+        }
+
+        if (chosen_piece == 0) {
+            pieces.push(new Queen(pawn_color, cell_id));
+        } else if (chosen_piece == 1) {
+            pieces.push(new Rook(pawn_color, true, cell_id));
+        } else if (chosen_piece == 2) {
+            pieces.push(new Bishop(pawn_color, cell_id));
+        } else {
+            pieces.push(new Knight(pawn_color, cell_id));
+        }
+
+        console.log(chosen_piece);
+    })
+
+    show_modal(pawn_color);
 }
+
 
 function show_modal(color) {
     modal.style.display = 'flex';
@@ -1328,7 +1358,6 @@ for (let i = 0; i < 64; i++) {
                 move_cell_id = cells[i].cell_id;
             } else if (cells[i].move_cell == true) {
                 let move_piece = get_piece_object_id(cells[move_cell_id - 1].piece, 'white', move_cell_id);
-                console.log(cells[move_cell_id - 1].piece);
                 pieces[move_piece].cell_id = cells[i].cell_id;
                 
                 cells[move_cell_id - 1].delete_piece();
@@ -1337,21 +1366,14 @@ for (let i = 0; i < 64; i++) {
                 let new_piece = get_piece_object(pieces[move_piece].piece_name);
                 new_piece.style.backgroundImage = `url(src/picture/chess/white_${pieces[move_piece].piece_name}.svg)`;
 
+                let new_en_passent = false;
+
                 if (pieces[move_piece].piece_name == 'pawn' && pieces[move_piece].already_moving == false) {
                     if (pieces[move_piece].piece_color == 'white' && cells[move_cell_id - 1].cell_id != cells[i].cell_id + 8) {
                         delete_en_passent();
                         cells[pieces[move_piece].cell_id + 7].en_passant_cell = cells[i].cell_id;
+                        new_en_passent = true;
                     }
-                }
-
-                if (pieces[move_piece].piece_name == 'pawn' && cells[i].en_passant_cell != null) {
-                    pieces.splice(get_piece_object_id(cells[i + 8].piece, 'black', cells[i + 8].cell_id), 1);
-                    cells[i + 8].delete_piece();
-                    delete_en_passent()
-                }
-                
-                if (!(pieces[move_piece].piece_name == 'pawn' && pieces[move_piece].already_moving == false)) {
-                    delete_en_passent()
                 }
                 
                 if (pieces[move_piece].piece_name == 'king' && pieces[move_piece].already_moving == false) {
@@ -1388,6 +1410,18 @@ for (let i = 0; i < 64; i++) {
 
                 let new_piece_name = pieces[move_piece].piece_name;
 
+                if (pieces[move_piece].piece_name == 'pawn' && cells[i].en_passant_cell != null) {
+                    pieces.splice(get_piece_object_id(cells[i + 8].piece, 'black', cells[i + 8].cell_id), 1);
+                    cells[i + 8].delete_piece();
+                    delete_en_passent()
+                } else {
+                    if (pieces[move_piece].piece_name != 'pawn') {
+                        delete_en_passent()
+                    } else if (new_en_passent == false) {
+                        delete_en_passent()
+                    }
+                }
+
                 if (cells[i].check_piece() == true) {
                     let deleted_piece = get_piece_object_id(cells[i].piece, 'black', cells[i].cell_id);
                     pieces.splice(deleted_piece, 1);
@@ -1395,10 +1429,12 @@ for (let i = 0; i < 64; i++) {
                 }
 
                 if (cells[i].cell_id < 9 && new_piece_name == 'pawn') {
-                    show_modal('white');
+                    chose_new_piece('white', cells[i].cell_id);
+                    let deleted_piece = get_piece_object_id('pawn', 'white', cells[i].cell_id);
+                    pieces.splice(deleted_piece, 1);
+                } else {
+                    cells[i].add_piece(new_piece_name, new_piece, 'white');
                 }
-
-                cells[i].add_piece(new_piece_name, new_piece, 'white');
 
                 turn = 2;
             }
@@ -1419,21 +1455,14 @@ for (let i = 0; i < 64; i++) {
                 let new_piece = get_piece_object(pieces[move_piece].piece_name);
                 new_piece.style.backgroundImage = `url(src/picture/chess/black_${pieces[move_piece].piece_name}.svg)`;
 
+                let new_en_passent = false;
+
                 if (pieces[move_piece].piece_name == 'pawn' && pieces[move_piece].already_moving == false) {
                     if (pieces[move_piece].piece_color == 'black' && cells[move_cell_id - 1].cell_id != cells[i].cell_id + 8) {
                         delete_en_passent();
                         cells[pieces[move_piece].cell_id - 9].en_passant_cell = cells[i].cell_id;
+                        new_en_passent = true;
                     }
-                }
-
-                if (pieces[move_piece].piece_name == 'pawn' && cells[i].en_passant_cell != null) {
-                    pieces.splice(get_piece_object_id(cells[i - 8].piece, 'white', cells[i - 8].cell_id), 1);
-                    cells[i - 8].delete_piece();
-                    delete_en_passent()
-                }
-
-                if (!(pieces[move_piece].piece_name == 'pawn' && pieces[move_piece].already_moving == false)) {
-                    delete_en_passent()
                 }
 
                 if (pieces[move_piece].piece_name == 'king' && pieces[move_piece].already_moving == false) {
@@ -1470,13 +1499,31 @@ for (let i = 0; i < 64; i++) {
 
                 let new_piece_name = pieces[move_piece].piece_name;
 
+                if (pieces[move_piece].piece_name == 'pawn' && cells[i].en_passant_cell != null) {
+                    pieces.splice(get_piece_object_id(cells[i - 8].piece, 'white', cells[i - 8].cell_id), 1);
+                    cells[i - 8].delete_piece();
+                    delete_en_passent()
+                } else {
+                    if (pieces[move_piece].piece_name != 'pawn') {
+                        delete_en_passent()
+                    } else if (new_en_passent == false) {
+                        delete_en_passent()
+                    }
+                }
+
                 if (cells[i].check_piece() == true) {
                     let deleted_piece = get_piece_object_id(cells[i].piece, 'white', cells[i].cell_id);
                     pieces.splice(deleted_piece, 1);
                     cells[i].delete_piece();
                 }
 
-                cells[i].add_piece(new_piece_name, new_piece, 'black');
+                if (cells[i].cell_id > 56 && new_piece_name == 'pawn') {
+                    chose_new_piece('black', cells[i].cell_id);
+                    let deleted_piece = get_piece_object_id('pawn', 'black', cells[i].cell_id);
+                    pieces.splice(deleted_piece, 1);
+                } else {
+                    cells[i].add_piece(new_piece_name, new_piece, 'black');
+                }
 
                 turn = 1;
             }
