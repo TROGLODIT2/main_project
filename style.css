@@ -83,6 +83,7 @@ header {
     width: 100%;
     padding: 1em 5vw;
     display: none;
+    z-index: 2;
 }
 
 .menu_items li {
@@ -735,5 +736,26 @@ footer {
 
     .card_behind {
         border-radius: 10px;
+    }
+
+    .game_content {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .chess_board {
+        height: auto;
+        width: 100%;
+    }
+
+    .chess_moves {
+        width: 100%;
+        aspect-ratio: auto;
+    }
+
+    .modal_window {
+        gap: 10px;
+        font-size: 22px;
+        padding: 10px;
     }
 }

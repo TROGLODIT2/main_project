@@ -456,9 +456,7 @@ function get_moves(cell_object) {
     let king_id = get_piece_object_id('king', cell_object.piece_color, 0);
     if (pieces[king_id].check_the_check() == true) {
         // если объявлен шах
-        console.log(1);
         if (check_double_check(pieces[king_id].cell_id, pieces[king_id].piece_color) == true) {
-            console.log(23233223);
             if (cell_object.piece == 'king') {
                 piece_moves_cells = get_attacked_cells(cell_object.cell_id, cell_object.piece, cell_object.piece_color);
                 for (i of get_attack_direction(pieces[king_id].cell_id, pieces[king_id].piece_color)) {
@@ -945,13 +943,11 @@ function check_double_check(cell_id, piece_color) {
         if (pieces[i].piece_color == other_team_color) {
             if (pieces[i].piece_name != 'king') {
                 if (get_attacked_cells(pieces[i].cell_id, pieces[i].piece_name, other_team_color).includes(cell_id) == true) {
-                    console.log(pieces[i].cell_id, pieces[i].piece_name, other_team_color, get_attacked_cells(pieces[i].cell_id, pieces[i].piece_name, other_team_color), cell_id);
                     check_count += 1;
                 }
             }
         }
     }
-    console.log(check_count);
 
     if (check_count > 1) {
         return true;
