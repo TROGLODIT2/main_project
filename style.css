@@ -11,6 +11,8 @@ body {
     flex-direction: column;
     justify-content: space-between;
     height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 h2 {
     font-weight: 500;
@@ -140,12 +142,49 @@ main {
     transition-duration: 0.4s;
     outline: 2px solid #dce2fa;
     background-position: center;
+    position: relative;
 }
+
+/*Заменить на дочерний элемент позже*/
+/* .game::before {
+    content: "i";
+    font-size: 18px;
+    color: rgb(103, 34, 231);
+    background-color: white;
+    outline: 2px solid rgb(103, 34, 231);
+    outline-offset: -2px;
+    position: absolute;
+    top: 4px;
+    left: calc(100% - 28px);
+    width: 24px;
+    height: 24px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    pointer-events: all;
+}
+
+.game:hover::before {
+    display: flex;
+} */
 
 .game:hover {
     transition-property: outline;
     transition-duration: 0.5s;
     outline: 2px solid rgb(103, 34, 231);
+}
+
+.new_game {
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    background-color: rgb(103, 34, 231);
+    width: fit-content;
+    padding: 2px 10px;
+    border-radius: 10px;
+    float: right;
+    margin: 4px;
 }
 
 .categories {
@@ -537,6 +576,37 @@ footer {
     pointer-events: none;
     width: 100%;
     height: 100%;
+    background-size: cover;
+}
+
+.cell {
+    position: relative;
+}
+
+.move_marker {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30%;
+    height: 30%;
+    border-radius: 50%;
+    background-color: rgba(97, 173, 67, 0.8);
+    pointer-events: none;
+}
+
+.chess_modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: none;
 }
 
 @media (max-width: 768px) {
