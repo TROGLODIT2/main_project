@@ -250,6 +250,42 @@ main {
     outline: 2px solid rgb(103, 34, 231);
 }
 
+.banner {
+    display: none;
+    margin-top: 23px;
+    width: 35%;
+    min-width: 250px;
+    aspect-ratio: 1.76/1;
+    border-radius: 20px;
+    box-sizing: border-box;
+    color: white;
+    font-weight: normal;
+    font-size: 3em;
+    padding: 2%;
+    position: relative;
+    background: rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.banner::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-image: url('src/picture/banner_1.jpg');
+    background-position: center;
+    background-size: contain;
+    transition-property: transform;
+    transition-duration: 0.4s;
+}
+
+.banner:hover::before {
+    transform: scale(1.05);
+}
+
 footer {
     padding-top: 15px;
     padding-bottom: 15px;
