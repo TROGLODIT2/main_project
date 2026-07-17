@@ -462,7 +462,7 @@ function get_moves(cell_object) {
                 for (i of get_attack_direction(pieces[king_id].cell_id, pieces[king_id].piece_color)) {
                     if (get_line_cells(cell_object.cell_id, get_reverse_direction(i), 1, cell_object.piece_color) != []) {
                         if (piece_moves_cells.includes(get_line_cells(cell_object.cell_id, get_reverse_direction(i), 1, cell_object.piece_color)[0]) == true) {
-                            piece_moves_cells.splice(piece_moves_cells.indexOf(get_line_cells(cell_object.cell_id, get_reverse_direction(i), 1, cell_object.piece_color)[0]), 1)
+                            piece_moves_cells.splice(piece_moves_cells.indexOf(get_line_cells(cell_object.cell_id, get_reverse_direction(i), 1, cell_object.piece_color)[0]), 1);
                         }
                     }
                 }
@@ -483,6 +483,7 @@ function get_moves(cell_object) {
                 let possible_moves = get_attacked_cells(cell_object.cell_id, cell_object.piece, cell_object.piece_color);
                 let attack_direction = get_attack_direction(pieces[king_id].cell_id, pieces[king_id].piece_color);
                 let attack_line = get_line_cells(pieces[king_id].cell_id, attack_direction, 8, pieces[king_id].piece_color);
+
                 if (attack_direction == 'knight') {
                     for (let i = attack_line.length - 1; i >= 0; i--) {
                         if (cells[attack_line[i] - 1].piece != 'knight') {
@@ -492,7 +493,6 @@ function get_moves(cell_object) {
                 }
 
                 if (cell_object.piece == 'pawn') {
-                    console.log(possible_moves);
                     for (let i = possible_moves.length - 1; i >= 0; i--) {
                         if (cells[possible_moves[i] - 1].piece == null && cells[possible_moves[i] - 1].en_passant_cell == null) {
                             possible_moves.splice(i, 1);
@@ -542,6 +542,7 @@ function get_moves(cell_object) {
         // Проверка на связку фигуры
         if (pieces[king_id].check_pins().includes(cell_object.cell_id) == false) {
             if (cell_object.piece != 'pawn') {
+                console.log('Ходы фигуры');
                 piece_moves_cells = get_attacked_cells(cell_object.cell_id, cell_object.piece, cell_object.piece_color);
                 console.log(piece_moves_cells);
                 if (cell_object.piece == 'king') {
@@ -642,8 +643,6 @@ function get_moves(cell_object) {
                         }
                     }
                 }
-
-                console.log(cell_object.cell_id, cell_object.piece, cell_object.piece_color);
 
                 for (let i of get_attacked_cells(cell_object.cell_id, cell_object.piece, cell_object.piece_color)) {
                     if (cells[i - 1].check_piece() == true && cells[i - 1].piece_color != cell_object.piece_color) {
@@ -799,6 +798,7 @@ function get_line_cells(cell_id, line_type, number, piece_color) {
             }
         }
     } else {
+        console.log(cells[cell_id - 1]);
         // Левые клетки
         if (cells[cell_id - 1].knight_left_edge == false) {
             // Верхняя клетка
@@ -834,15 +834,15 @@ function get_line_cells(cell_id, line_type, number, piece_color) {
         }
         // Верхние клетки
         if (cells[cell_id - 1].knight_top_edge == false) {
-            // Левая клетка
-            if (cells[cell_id - 1].left_edge == false) {
+            // Правая клетка
+            if (cells[cell_id - 1].right_edge == false) {
                 if (cells[cell_id - 1 - 15].piece_color != piece_color) {
                     attacked_cells.push(cell_id - 15);
                 }
             }
 
-            // Правая клетка
-            if (cells[cell_id - 1].right_edge == false) {
+            // Левая клетка
+            if (cells[cell_id - 1].left_edge == false) {
                 if (cells[cell_id - 1 - 17].piece_color != piece_color) {
                     attacked_cells.push(cell_id - 17);
                 }
@@ -987,17 +987,18 @@ function check_king_attack_direction(direction, cell_id, piece_color) {
             return true;
         }
     } else if (cells[last_cell_id - 1].piece == 'pawn') {
+        console.log(cells[last_cell_id - 1].piece_color, direction);
         if (attacked_cells.length == 1) {
             if (cells[last_cell_id - 1].piece_color == 'white') {
-                if (direction == 'topleft') {
-                    return true;
-                } else if (direction == 'topright') {
-                    return true;
-                }
-            } else {
                 if (direction == 'bottomleft') {
                     return true;
                 } else if (direction == 'bottomright') {
+                    return true;
+                }
+            } else {
+                if (direction == 'topleft') {
+                    return true;
+                } else if (direction == 'topright') {
                     return true;
                 }
             }
@@ -1008,26 +1009,45 @@ function check_king_attack_direction(direction, cell_id, piece_color) {
 }
 
 function get_attack_direction(cell_id, piece_color) {
+    let attack_knight = true;
+
     let attack_directions = [];
     if (check_king_attack_direction('left', cell_id, piece_color) == true) {
         attack_directions.push('left');
-    } else if (check_king_attack_direction('right', cell_id, piece_color) == true) {
+        attack_knight = false;
+    }
+    if (check_king_attack_direction('right', cell_id, piece_color) == true) {
         attack_directions.push('right');
-    } else if (check_king_attack_direction('top', cell_id, piece_color) == true) {
+        attack_knight = false;
+    }
+    if (check_king_attack_direction('top', cell_id, piece_color) == true) {
         attack_directions.push('top');
-    } else if (check_king_attack_direction('bottom', cell_id, piece_color) == true) {
+        attack_knight = false;
+    }
+    if (check_king_attack_direction('bottom', cell_id, piece_color) == true) {
         attack_directions.push('bottom');
-    } else if (check_king_attack_direction('topleft', cell_id, piece_color) == true) {
+        attack_knight = false;
+    }
+    if (check_king_attack_direction('topleft', cell_id, piece_color) == true) {
         attack_directions.push('topleft');
-    } else if (check_king_attack_direction('topright', cell_id, piece_color) == true) {
+        attack_knight = false;
+    }
+    if (check_king_attack_direction('topright', cell_id, piece_color) == true) {
         attack_directions.push('topright');
-    } else if (check_king_attack_direction('bottomleft', cell_id, piece_color) == true) {
+        attack_knight = false;
+    }
+    if (check_king_attack_direction('bottomleft', cell_id, piece_color) == true) {
         attack_directions.push('bottomleft');
-    } else if (check_king_attack_direction('bottomright', cell_id, piece_color) == true) {
+        attack_knight = false;
+    }
+    if (check_king_attack_direction('bottomright', cell_id, piece_color) == true) {
         attack_directions.push('bottomright');
-    } else {
+        attack_knight = false;
+    }
+    if (attack_knight == true) {
         attack_directions.push('knight');
     }
+    
     return attack_directions;
 }
 
